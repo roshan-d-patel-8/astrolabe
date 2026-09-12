@@ -1,3 +1,5 @@
 .DS_Store
 __pycache__/
 .preview.html
+.impeccable/review/
+.impeccable/brief.md

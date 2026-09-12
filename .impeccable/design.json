@@ -1,0 +1,185 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-12T20:08:32Z",
+  "title": "Design System: Astrolabe",
+  "extensions": {
+    "colorMeta": {
+      "paper": {
+        "role": "neutral",
+        "displayName": "Mineral white"
+      },
+      "dark-paper": {
+        "role": "neutral",
+        "displayName": "Deep petroleum"
+      },
+      "accent": {
+        "role": "primary",
+        "displayName": "Evidence blue-green"
+      },
+      "brass": {
+        "role": "secondary",
+        "displayName": "Orientation brass"
+      },
+      "hathi": {
+        "role": "secondary",
+        "displayName": "Hathi violet"
+      },
+      "skoll": {
+        "role": "primary",
+        "displayName": "Skoll blue-green"
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Working surface"
+      },
+      "raised": {
+        "role": "neutral",
+        "displayName": "Selected surface"
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Primary ink"
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Supporting ink"
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Hairline divider"
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Primary workspace heading; 30px at widths up to 800px."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Section headings."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Domain identity."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Default readable interface text."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Supporting captions and metadata."
+      },
+      "action": {
+        "displayName": "Action",
+        "purpose": "Primary and ghost action labels."
+      }
+    },
+    "shadows": [],
+    "motion": [
+      {
+        "name": "panel-arrival",
+        "value": "220ms ease-out",
+        "purpose": "Panel entry from opacity 0.3 and translateY(5px)."
+      },
+      {
+        "name": "drawer-translation",
+        "value": "180ms ease",
+        "purpose": "Drawer translation between offscreen and visible."
+      },
+      {
+        "name": "drawer-visibility",
+        "value": "180ms",
+        "purpose": "Drawer visibility transition."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "wide-workspace",
+        "value": "1700px"
+      },
+      {
+        "name": "compact-rail",
+        "value": "1200px"
+      },
+      {
+        "name": "horizontal-navigation",
+        "value": "800px"
+      },
+      {
+        "name": "stacked-columns",
+        "value": "520px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Quiet raised action with a visible keyboard focus outline; hover retains its fill.",
+      "html": "<button class=\"ds-primary\" type=\"button\">Open workspace</button>",
+      "css": ".ds-primary{font-family:Manrope,\"Avenir Next\",sans-serif;line-height:1.55;display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:10px 14px;font-size:12px;font-weight:700;border:1px solid var(--line,#ccd5d1);border-radius:5px;text-decoration:none;color:var(--ink,#182c32);background:var(--raised,#e9ece7);cursor:pointer;touch-action:manipulation;}.ds-primary:hover{background:var(--raised,#e9ece7);}.ds-primary:focus-visible{outline:3px solid var(--accent,#146578);outline-offset:4px;}.ds-primary:disabled{cursor:default;opacity:.45;}"
+    },
+    {
+      "name": "Search input",
+      "kind": "input",
+      "refersTo": "search-input",
+      "description": "Compact labeled search with a surface fill and accent caret. Hover does not change its source appearance.",
+      "html": "<label class=\"ds-search\"><span>Search items</span><input type=\"search\" aria-label=\"Search items\" placeholder=\"Search items\"></label>",
+      "css": ".ds-search{display:block;max-width:280px;flex:1;}.ds-search>span{display:none;}.ds-search input{font-family:Manrope,\"Avenir Next\",sans-serif;line-height:1.55;min-width:0;width:100%;font-size:13px;color:var(--ink,#182c32);background:var(--surface,#fff);border:1px solid var(--line,#ccd5d1);border-radius:5px;padding:11px 13px;caret-color:var(--accent,#146578);}.ds-search input::placeholder{color:var(--muted,#53676b);opacity:1;}.ds-search input:hover{background:var(--surface,#fff);}.ds-search input:focus-visible{outline:3px solid var(--accent,#146578);outline-offset:4px;}"
+    },
+    {
+      "name": "Altitude navigation",
+      "kind": "nav",
+      "refersTo": "altitude-navigation",
+      "description": "Tabular code, strong name, and supporting subtitle; current selection is both tonal and semantic.",
+      "html": "<nav class=\"ds-altitudes\" aria-label=\"Focus altitude\"><button class=\"ds-altitude ds-current\" type=\"button\" aria-current=\"page\"><span class=\"ds-code\">F2</span><span class=\"ds-short\">Cartography</span><small>Choose a domain</small></button><button class=\"ds-altitude\" type=\"button\"><span class=\"ds-code\">F4</span><span class=\"ds-short\">Lens</span><small>Examine evidence</small></button></nav>",
+      "css": ".ds-altitudes{display:flex;flex-direction:column;gap:5px;}.ds-altitude{font-family:Manrope,\"Avenir Next\",sans-serif;line-height:1.55;font-size:16px;color:var(--ink,#182c32);background:transparent;cursor:pointer;touch-action:manipulation;text-align:left;border:1px solid transparent;border-radius:7px;display:grid;grid-template-columns:30px 1fr;gap:8px;padding:15px 12px;align-items:center;}.ds-altitude:hover,.ds-altitude.ds-current{background:var(--raised,#e9ece7);}.ds-altitude.ds-current{border-color:var(--line,#ccd5d1);}.ds-code{font-size:12px;font-variant-numeric:tabular-nums;color:var(--muted,#53676b);}.ds-short{font-size:14px;font-weight:700;}.ds-altitude small{grid-column:2;margin-top:-6px;font-size:12px;font-weight:400;color:var(--muted,#53676b);}.ds-current .ds-code{color:var(--accent,#146578);}.ds-altitude:focus-visible{outline:3px solid var(--accent,#146578);outline-offset:4px;}"
+    },
+    {
+      "name": "Domain row",
+      "kind": "custom",
+      "refersTo": "domain-row",
+      "description": "Open evidence row, using generic sample labels and illustrative counts.",
+      "html": "<button class=\"ds-domain\" type=\"button\"><span class=\"ds-domain-name\"><b>Example domain</b><small>Example realm</small></span><span class=\"ds-arrow\"><svg viewBox=\"0 0 24 24\" width=\"18\" height=\"18\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M6 18 18 6M6 6h12v12\"/></svg></span><span class=\"ds-vector\">A short statement of what matters in this example domain.</span><span class=\"ds-evidence\"><span class=\"ds-dots\" aria-label=\"Example measure: on course\"><i class=\"ds-dot\" aria-hidden=\"true\"></i> <b>1</b> measure</span><span><b>2</b> suggested tasks</span></span></button>",
+      "css": ".ds-domain{font-family:Manrope,\"Avenir Next\",sans-serif;font-size:16px;line-height:1.55;color:var(--ink,#182c32);background:transparent;cursor:pointer;touch-action:manipulation;display:grid;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line,#ccd5d1);grid-template-columns:1fr 20px;gap:8px 10px;padding:20px 6px;min-height:139px;}.ds-domain:hover,.ds-domain.ds-selected{background:var(--raised,#e9ece7);}.ds-domain:focus-visible{outline:3px solid var(--accent,#146578);outline-offset:4px;}.ds-domain-name b{font-size:16px;font-weight:700;}.ds-domain-name small{display:block;font-size:12px;margin-top:1px;color:var(--muted,#53676b);}.ds-arrow{color:var(--muted,#53676b);}.ds-vector{grid-column:1/3;font-size:13px;line-height:1.6;color:var(--muted,#53676b);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}.ds-evidence{grid-column:1/3;display:flex;gap:16px;flex-wrap:wrap;align-items:center;font-size:12px;color:var(--muted,#53676b);}.ds-evidence b{color:var(--ink,#182c32);font-variant-numeric:tabular-nums;}.ds-dots{display:inline-flex;gap:5px;align-items:center;}.ds-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--good,#237051);}"
+    },
+    {
+      "name": "Stage selector",
+      "kind": "custom",
+      "refersTo": "stage-selector",
+      "description": "Three work-stage filters with illustrative counts, hover fill, and pressed-state outline.",
+      "html": "<div class=\"ds-stages\" role=\"group\" aria-label=\"Example work stage\"><button class=\"ds-stage\" type=\"button\" aria-pressed=\"false\"><b>4</b><i>Gate</i></button><button class=\"ds-stage ds-active\" type=\"button\" aria-pressed=\"true\"><b>2</b><i>Forge</i></button><button class=\"ds-stage\" type=\"button\" aria-pressed=\"false\"><b>1</b><i>Flow</i></button></div>",
+      "css": ".ds-stages{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px;}.ds-stage{font-family:Manrope,\"Avenir Next\",sans-serif;line-height:1.55;color:var(--ink,#182c32);background:transparent;cursor:pointer;touch-action:manipulation;border:0;border-radius:4px;text-align:left;padding:0 4px;}.ds-stage b{font-size:30px;font-weight:500;display:block;}.ds-stage i{font-style:normal;font-size:12px;color:var(--muted,#53676b);}.ds-stage:hover{background:var(--raised,#e9ece7);}.ds-stage:focus-visible{outline:3px solid var(--accent,#146578);outline-offset:4px;}.ds-stage.ds-active{outline:1px solid var(--accent,#146578);}"
+    }
+  ],
+  "narrative": {
+    "northStar": "An observatory's working atlas",
+    "overview": "Open plates, aligned evidence, and quiet instrument-like controls make a dense interface readable. Mineral white and deep petroleum provide equivalent light and dark working environments. The celestial layer belongs to orientation, while the interface keeps text, comparison, and action in the foreground.",
+    "keyCharacteristics": [
+      "Open layouts with hairline divisions and restrained tonal layering.",
+      "Manrope typography with tabular numerals for comparable quantities.",
+      "Persistent five-altitude orientation and clear selected states.",
+      "Brief transitions and a reduced-motion presentation."
+    ],
+    "rules": [
+      {
+        "name": "The Evidence Label Rule",
+        "body": "Pair status dots and colored work distributions with labels or counts; color alone does not explain the evidence.",
+        "section": "colors"
+      }
+    ],
+    "dos": [
+      "Do preserve the same semantic color roles across light and dark themes.",
+      "Do align comparable quantities and use tabular numerals.",
+      "Do keep keyboard focus, current navigation, and selected filters visibly identifiable.",
+      "Do respect reduced-motion settings and responsive stacking."
+    ],
+    "donts": [
+      "Don't replace open rows with a repeated grid of elevated cards.",
+      "Don't use decorative color or motion to imply evidence the interface does not contain.",
+      "Don't place personal records, task titles, or access material in design examples."
+    ]
+  }
+}

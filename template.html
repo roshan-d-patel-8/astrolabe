@@ -6,35 +6,34 @@
 <title>The Astrolabe</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🧭%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap">
 <style>
-:root{--bg:#eef0f3;--ink:#1a2030;--muted:#5a6274;--line:#c9ced8;--panel:#f7f8fa;--brass:#9a6d1c;--brass-soft:#f1e7cf;--crit:#b23c34}
-@media (prefers-color-scheme:dark){:root{--bg:#0e1322;--ink:#e7e2d4;--muted:#9aa3b5;--line:#2a3350;--panel:#161c30;--brass:#d3a54e;--brass-soft:#2b2617;--crit:#e0625a}}
+:root{--bg:#f4f5f1;--ink:#182c32;--muted:#53676b;--line:#ccd5d1;--panel:#fff;--brass:#826222;--brass-soft:#e9ece7;--crit:#b0413a}
+@media (prefers-color-scheme:dark){:root{--bg:#102329;--ink:#e3ede7;--muted:#a5b9bb;--line:#365057;--panel:#162d34;--brass:#ddbd78;--brass-soft:#203a41;--crit:#f49a8e}}
 *{box-sizing:border-box}
-body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg);color:var(--ink);font:15px/1.5 "IBM Plex Sans","Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
-.card{width:min(420px,92vw);background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--brass);border-radius:3px;padding:28px 28px 22px;box-shadow:0 1px 0 rgba(26,32,48,.06),0 8px 24px -16px rgba(26,32,48,.35)}
+body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg);color:var(--ink);font:16px/1.6 Manrope,'Avenir Next',sans-serif;-webkit-font-smoothing:antialiased}
+.card{width:min(460px,92vw);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:36px}
 .eyebrow{font-family:"IBM Plex Mono",Menlo,monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
-h1{font-family:"Cormorant Garamond",Garamond,"Times New Roman",serif;font-weight:500;font-size:44px;line-height:1.05;margin:4px 0 6px}
-h1 em{font-style:italic;color:var(--brass)}
+h1{font-family:inherit;font-weight:500;font-size:32px;letter-spacing:-.035em;line-height:1.2;margin:0 0 16px}
+h1 em{font-style:normal}
 .sub{color:var(--muted);margin:0 0 18px;font-size:14px}
 input{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:2px;background:var(--bg);color:var(--ink);font:inherit}
 input:focus{outline:2px solid var(--brass);outline-offset:1px;border-color:var(--brass)}
-button{margin-top:10px;width:100%;padding:10px;border:1px solid var(--brass);border-radius:2px;background:var(--brass-soft);color:var(--ink);font-family:"IBM Plex Mono",Menlo,monospace;font-size:12px;letter-spacing:.06em;cursor:pointer}
+button{margin-top:12px;width:100%;padding:12px;border:1px solid var(--line);border-radius:5px;background:var(--brass-soft);color:var(--ink);font:600 14px Manrope,sans-serif;cursor:pointer}button:focus-visible{outline:2px solid var(--brass);outline-offset:3px}
 button:disabled{opacity:.6;cursor:wait}
-.err{color:var(--crit);font-family:"IBM Plex Mono",Menlo,monospace;font-size:12px;min-height:18px;margin-top:10px}
-.foot{margin-top:14px;font-family:"IBM Plex Mono",Menlo,monospace;font-size:11px;color:var(--muted)}
+.err{color:var(--crit);font-size:13px;min-height:18px;margin-top:10px}
+.foot{margin-top:14px;font-size:12px;color:var(--muted)}
 .shake{animation:sh .35s}@keyframes sh{20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
 </style>
 </head>
 <body>
 <form class="card" id="gate" autocomplete="off">
-  <div class="eyebrow">Polaris · one house, two wings, five altitudes</div>
   <h1>The <em>Astrolabe</em></h1>
-  <p class="sub">This plate is private. Enter the passphrase, or open your magic link; either enrolls this device.</p>
+  <p class="sub">Your private working atlas. Enter your passphrase or use your access link. This browser will remember your access.</p>
   <input type="password" id="pass" placeholder="passphrase" aria-label="passphrase" autofocus>
   <button type="submit" id="unlock">Unlock</button>
-  <div class="err" id="err"></div>
-  <div class="foot">AES-256-GCM · decrypted in your browser · nothing leaves this page</div>
+  <div class="err" id="err" role="status" aria-live="polite"></div>
+  <div class="foot">AES-256-GCM · content decrypted in your browser</div>
 </form>
 <script>
 "use strict";
