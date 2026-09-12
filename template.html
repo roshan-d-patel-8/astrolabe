@@ -74,11 +74,14 @@ document.getElementById("gate").addEventListener("submit", async (e)=>{
     btn.disabled = false;
   }
 });
-(async ()=>{
+async function tryLink(){
   const fromLink = fragmentPass();
-  if(fromLink){
-    try{ const html = await decrypt(fromLink); try{ localStorage.setItem(KEY, fromLink); }catch(_){} boot(html); return; }catch(_){}
-  }
+  if(!fromLink) return false;
+  try{ const html = await decrypt(fromLink); try{ localStorage.setItem(KEY, fromLink); }catch(_){} boot(html); return true; }catch(_){ return false; }
+}
+window.addEventListener("hashchange", tryLink); // magic link pasted into an already-open gate tab
+(async ()=>{
+  if(await tryLink()) return;
   let saved = null; try{ saved = localStorage.getItem(KEY) || sessionStorage.getItem(KEY); }catch(_){}
   if(saved){
     try{ boot(await decrypt(saved)); return; }
