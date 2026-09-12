@@ -26,7 +26,8 @@ def run():
         page.on("pageerror", lambda error: errors.append(str(error)))
         page.goto(f"http://127.0.0.1:4173/index.html#k={token}", wait_until="networkidle")
         page.locator('[data-panel="2"]').wait_for(state="visible")
-        assert page.get_by_text("The dashboard fleet").count() == 1
+        assert page.locator(".altitude-btn").count() == 5
+        assert page.locator(".domain-row").count() == 10
         assert page.locator(".task-card").count() == len(page.evaluate("window.ASTRO_SNAPSHOT.tasks"))
         browser.close()
     assert not errors, "\n".join(errors)

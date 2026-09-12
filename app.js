@@ -5,13 +5,11 @@
   const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
   const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[char]));
   const ALTITUDES = [
-    { n: 0, name: "Ground", short: "Presence", question: "Am I here?", detail: "Return beneath measurement and language." },
-    { n: 1, name: "Compass", short: "Meaning", question: "Why does this matter?", detail: "Polaris: identity, values, mission, and vision." },
-    { n: 2, name: "Cartography", short: "Domains", question: "What am I driving?", detail: "Ten living domains held in one relational map." },
-    { n: 3, name: "Monocle", short: "Systems", question: "What is actually true?", detail: "The dashboard fleet and the condition of the instruments." },
-    { n: 4, name: "Lens", short: "Measure", question: "What do the numbers say?", detail: "Drive, watch, and loop measures against an explicit glidepath." },
-    { n: 5, name: "Momentum", short: "Action", question: "What exactly gets done?", detail: "The current TaskNotes board, rendered as an encrypted vault snapshot." },
-    { n: 6, name: "Andon", short: "Capacity", question: "Am I flooded?", detail: "Capacity gates that can contract the entire system back to presence." },
+    { n: 1, name: "Compass", short: "Why", question: "Why?", detail: "Polaris · purpose · values" },
+    { n: 2, name: "Cartography", short: "Where", question: "Where?", detail: "Ten domains · one field of view" },
+    { n: 3, name: "Monocle", short: "What", question: "What is true?", detail: "Instrument currency · system condition" },
+    { n: 4, name: "Lens", short: "Measure", question: "How are we doing?", detail: "Current · target · ownership" },
+    { n: 5, name: "Momentum", short: "Now", question: "What moves now?", detail: "Gate → Forge → Flow" },
   ];
   const SNAPSHOT = window.ASTRO_SNAPSHOT || { tasks: [], dashboards: [], taskCounts: {}, generatedAt: "" };
   const PILLARS = window.ASTRO_PILLARS || [];
@@ -25,7 +23,7 @@
     fleetQuery: "",
     selected: null,
   };
-  if (!Number.isInteger(state.altitude) || state.altitude < 0 || state.altitude > 6) state.altitude = 2;
+  if (!Number.isInteger(state.altitude) || state.altitude < 1 || state.altitude > 5) state.altitude = 2;
 
   const stageLabel = { gate: "Gate", forge: "Forge", flow: "Flow" };
   const priorityRank = { high: 0, normal: 1, low: 2, none: 3 };
@@ -45,16 +43,16 @@
   }
 
   function setAltitude(next) {
-    state.altitude = Math.max(0, Math.min(6, next));
+    state.altitude = Math.max(1, Math.min(5, next));
     localStorage.setItem("astrolabe-altitude", String(state.altitude));
-    const meta = ALTITUDES[state.altitude];
+    const meta = ALTITUDES.find((item) => item.n === state.altitude);
     $$(".panel").forEach((panel) => panel.classList.toggle("active", Number(panel.dataset.panel) === state.altitude));
     $("#altitudeName").textContent = `F${meta.n} · ${meta.name}`;
     $("#altitudeQuestion").textContent = meta.question;
     $("#altitudeDetail").textContent = meta.detail;
     $("#crumbAltitude").textContent = `F${meta.n} ${meta.name}`;
-    $("#prevAltitude").disabled = state.altitude === 0;
-    $("#nextAltitude").disabled = state.altitude === 6;
+    $("#prevAltitude").disabled = state.altitude === 1;
+    $("#nextAltitude").disabled = state.altitude === 5;
     document.body.dataset.altitude = String(state.altitude);
     renderRail();
     window.dispatchEvent(new CustomEvent("astrolabe-altitude", { detail: state.altitude }));
@@ -102,15 +100,38 @@
     return PILLARS.find((p) => p.id === (rules.find(([, regex]) => regex.test(text)) || ["financial"])[0]);
   }
 
-  function renderPillars() {
-    const positions = [[17,25],[33,15],[70,18],[85,32],[84,67],[68,83],[34,85],[15,69],[28,50],[72,50]];
-    $("#pillarNodes").innerHTML = PILLARS.map((p, index) => `
-      <button class="pillar-node ${p.w}" data-pillar="${esc(p.id)}" data-wing="${p.w}" style="left:${positions[index][0]}%;top:${positions[index][1]}%">
-        <b>${esc(p.name)}</b><small>${esc(p.realm)}</small>
-      </button>`).join("");
-    $("#pillarLedger").innerHTML = PILLARS.map((p) => `
-      <button class="ledger-row ${p.w}" data-pillar="${esc(p.id)}" data-wing="${p.w}"><i></i><span>${esc(p.name)}</span><small>${esc(p.realm)}</small></button>`).join("");
+  function renderCompass() {
+    const counts = [
+      [PILLARS.length, "domains"],
+      [SNAPSHOT.dashboards.length, "instruments"],
+      [SNAPSHOT.tasks.length, "active"],
+      [METRICS.filter((m) => m.status === "good").length, "on course"],
+      [METRICS.filter((m) => m.status === "none").length, "blind"],
+    ];
+    $("#compassReadout").innerHTML = counts.map(([value, label], index) => `
+      <div class="readout-cell r${index + 1}"><b>${value}</b><span>${label}</span></div>`).join("");
+  }
+
+  function renderDomains() {
+    $("#domainMatrix").innerHTML = PILLARS.map((p, index) => {
+      const measures = METRICS.filter((metric) => metric.pillar === p.name);
+      const tasks = SNAPSHOT.tasks.filter((task) => pillarForTask(task)?.id === p.id);
+      const statusCounts = ["good", "warn", "critical", "none"].map((status) => measures.filter((m) => m.status === status).length);
+      const taskCounts = ["gate", "forge", "flow"].map((stage) => tasks.filter((task) => task.status === stage).length);
+      return `<button class="domain-row ${p.w}" data-pillar="${esc(p.id)}" data-wing="${p.w}">
+        <span class="domain-index">${String(index + 1).padStart(2, "0")}</span>
+        <span class="domain-name"><b>${esc(p.name)}</b><small>${esc(p.realm)}</small></span>
+        <span class="condition-dots" aria-label="${measures.length} measures">
+          ${statusCounts.map((count, i) => `<i class="${["good", "warn", "critical", "none"][i]}" style="--count:${count}" title="${count}"></i>`).join("")}
+        </span>
+        <span class="task-dots" aria-label="${tasks.length} active tasks">
+          ${taskCounts.map((count, i) => `<i class="${["gate", "forge", "flow"][i]}" style="--share:${Math.max(2, count)}"><em>${count}</em></i>`).join("")}
+        </span>
+        <span class="domain-vector"><i>BEING</i><b>${esc(p.being)}</b><i>BECOMING</i><b>${esc(p.becoming)}</b></span>
+      </button>`;
+    }).join("");
     $$('[data-pillar]').forEach((button) => button.addEventListener("click", () => selectPillar(button.dataset.pillar)));
+    renderWing();
   }
 
   function selectPillar(id) {
@@ -138,31 +159,44 @@
     return "Identity";
   }
 
+  function dashboardAge(dashboard) {
+    const parsed = Date.parse(dashboard.refreshed || "");
+    const reference = Date.parse(SNAPSHOT.generatedAt || "") || Date.now();
+    if (!Number.isFinite(parsed)) return { days: null, status: "unknown", label: "date unknown" };
+    const days = Math.max(0, Math.floor((reference - parsed) / 86400000));
+    return { days, status: days <= 14 ? "fresh" : days <= 45 ? "watch" : "stale", label: `${days}d` };
+  }
+
   function renderFleet() {
     const query = state.fleetQuery.trim().toLowerCase();
     const records = SNAPSHOT.dashboards.filter((d) => `${d.title} ${d.description} ${(d.tags || []).join(" ")}`.toLowerCase().includes(query));
-    $("#fleetCount").textContent = `${records.length} of ${SNAPSHOT.dashboards.length} instruments`;
-    $("#fleetGrid").innerHTML = records.map((d) => `
-      <a class="fleet-item" href="${esc(d.uri)}" data-dashboard="${esc(d.title)}">
-        <span class="eyebrow">${esc(dashboardGroup(d))}</span>
-        <b>${esc(d.title)}</b>
-        <p>${esc(d.description)}</p>
-        <small>refreshed ${esc(d.refreshed || "unknown")} · open in Obsidian ↗</small>
-      </a>`).join("") || '<div class="empty-state">No instrument answers that search.</div>';
+    const states = ["fresh", "watch", "stale", "unknown"];
+    const totals = states.map((status) => records.filter((d) => dashboardAge(d).status === status).length);
+    $("#fleetTallies").innerHTML = states.map((status, i) => `<span class="fleet-tally ${status}"><b>${totals[i]}</b><i>${status}</i></span>`).join("");
+    $("#fleetCount").textContent = `${records.length} / ${SNAPSHOT.dashboards.length} instruments`;
+    const groups = [...new Set(records.map(dashboardGroup))];
+    $("#fleetGrid").innerHTML = groups.map((group) => {
+      const groupRecords = records.filter((d) => dashboardGroup(d) === group).sort((a, b) => (dashboardAge(b).days ?? 999) - (dashboardAge(a).days ?? 999));
+      return `<div class="fleet-row" style="--row-height:${Math.max(100, groupRecords.length * 19 + 12)}px"><div class="fleet-label"><b>${esc(group)}</b><span>${groupRecords.length}</span></div><div class="fleet-marks">
+        ${groupRecords.map((d, index) => { const age = dashboardAge(d); const left = age.days === null ? 3 : Math.max(4, 98 - Math.min(age.days, 90) / 90 * 94); return `<a class="fleet-item ${age.status} ${left > 82 ? "edge" : ""}" href="${esc(d.uri)}" data-dashboard="${esc(d.title)}" style="--x:${left}%;--y:${index}"><i></i><b>${esc(d.title)}</b><small>${esc(age.label)}</small></a>`; }).join("")}
+      </div></div>`;
+    }).join("") || '<div class="empty-state">No matching instruments.</div>';
   }
 
   function renderMetrics() {
     const rows = METRICS.filter((r) => state.wing === "both" || r.w === state.wing);
     const tallies = ["good", "warn", "critical", "none"].map((status) => rows.filter((row) => row.status === status).length);
     $("#metricTallies").innerHTML = [
-      [tallies[0], "on course"], [tallies[1], "watch closely"], [tallies[2], "off course"], [tallies[3], "instrument blind"],
-    ].map(([value, label]) => `<div class="metric-tally"><b>${value}</b><span>${label}</span></div>`).join("");
+      [tallies[3], "blind", "none"], [tallies[2], "off course", "critical"], [tallies[1], "watch", "warn"], [tallies[0], "on course", "good"],
+    ].map(([value, label, status]) => `<div class="metric-tally ${status}"><b>${value}</b><span>${label}</span></div>`).join("");
+    const position = { none: 0, critical: 33.33, warn: 66.66, good: 100 };
     $("#metricRows").innerHTML = rows.map((r) => `
-      <tr data-wing="${r.w}">
-        <td><span class="status-dot ${r.status}"></span><span class="metric-pillar">${esc(r.pillar)}</span></td>
-        <td>${esc(r.metric)}</td><td class="mono">${esc(r.current)}</td><td>${esc(r.target)}</td>
-        <td><span class="class-chip">${esc(r.class)}</span></td><td>${esc(r.owner)}</td>
-      </tr>`).join("");
+      <div class="metric-row" data-wing="${r.w}">
+        <div class="metric-label"><span>${esc(r.pillar)}</span><b>${esc(r.metric)}</b></div>
+        <div class="metric-track"><i class="tick t0"></i><i class="tick t1"></i><i class="tick t2"></i><i class="tick t3"></i><span class="metric-dot ${r.status}" style="left:${position[r.status] ?? 0}%"></span></div>
+        <div class="metric-values"><b>${esc(r.current)}</b><span>→ ${esc(r.target)}</span></div>
+        <div class="metric-owner"><b>${esc(r.class)}</b><span>${esc(r.owner)}</span></div>
+      </div>`).join("");
   }
 
   function taskMatches(task) {
@@ -173,17 +207,24 @@
 
   function renderBoard() {
     const tasks = SNAPSHOT.tasks.filter(taskMatches).sort((a, b) => (priorityRank[a.priority] ?? 3) - (priorityRank[b.priority] ?? 3));
+    const total = Math.max(1, tasks.length);
+    $("#flowRibbon").innerHTML = ["gate", "forge", "flow"].map((stage, index) => {
+      const count = tasks.filter((task) => task.status === stage).length;
+      return `<div class="flow-stage ${stage}" style="--weight:${Math.max(12, count / total * 100)}"><span>F5.${index + 1}</span><b>${count}</b><i>${stage}</i></div>${index < 2 ? '<em>→</em>' : ''}`;
+    }).join("");
+    $("#priorityMatrix").innerHTML = ["high", "normal", "low"].map((priority) => {
+      const counts = ["gate", "forge", "flow"].map((stage) => tasks.filter((task) => task.status === stage && task.priority === priority).length);
+      return `<div class="priority-row"><b>${priority}</b>${counts.map((count, i) => `<i class="${["gate", "forge", "flow"][i]}" style="--n:${Math.max(1, count)}"><span>${count}</span></i>`).join("")}</div>`;
+    }).join("");
     ["gate", "forge", "flow"].forEach((stage) => {
       const stageTasks = tasks.filter((task) => task.status === stage);
       $(`#count-${stage}`).textContent = String(stageTasks.length);
       $(`#tasks-${stage}`).innerHTML = stageTasks.slice(0, 80).map((task) => `
         <button class="task-card ${esc(task.priority)}" data-task="${esc(task.id)}">
-          <span class="task-title">${esc(task.title)}</span>
+          <span class="task-signal" aria-hidden="true"></span><span class="task-title">${esc(task.title)}</span>
           <span class="task-meta">
-            <span class="task-chip">${esc(task.type || "task")}</span>
-            ${task.scheduled ? `<span class="date">scheduled ${esc(shortDate(task.scheduled))}</span>` : ""}
-            ${task.due ? `<span class="date">due ${esc(shortDate(task.due))}</span>` : ""}
-            <span>${esc(task.priority || "normal")}</span>
+            ${task.scheduled ? `<span class="date">${esc(shortDate(task.scheduled))}</span>` : ""}
+            ${task.due ? `<span class="date">→ ${esc(shortDate(task.due))}</span>` : ""}
           </span>
         </button>`).join("") || '<div class="empty-state">Clear.</div>';
     });
@@ -311,10 +352,10 @@
       const starGeo = new THREE.BufferGeometry(); starGeo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
       const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({ color: uniforms.uBrass.value, size: .025, transparent: true, opacity: .48 })); group.add(stars);
 
-      let targetZ = 11 - state.altitude * .32;
+      let targetZ = 11 - (state.altitude - 1) * .38;
       let px = 0, py = 0;
       addEventListener("pointermove", (event) => { px = (event.clientX / innerWidth - .5) * .22; py = (event.clientY / innerHeight - .5) * .16; }, { passive: true });
-      addEventListener("astrolabe-altitude", (event) => { targetZ = 11 - Number(event.detail) * .32; });
+      addEventListener("astrolabe-altitude", (event) => { targetZ = 11 - (Number(event.detail) - 1) * .38; });
       addEventListener("astrolabe-theme", () => { uniforms.uBrass.value.set(parseColor("--brass")); uniforms.uInk.value.set(parseColor("--ink")); group.traverse((obj) => { if (obj.material?.color) obj.material.color.set(uniforms.uBrass.value); }); });
       function resize() { renderer.setSize(innerWidth, innerHeight, false); camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); }
       addEventListener("resize", resize, { passive: true }); resize();
@@ -350,7 +391,7 @@
       const typing = /INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName);
       if (event.key === "Escape") { closeDrawer(); closePalette(); $("#observatory").classList.remove("open"); }
       if (!typing && event.key === "/") { event.preventDefault(); openPalette(); }
-      if (!typing && /^[0-6]$/.test(event.key)) setAltitude(Number(event.key));
+      if (!typing && /^[1-5]$/.test(event.key)) setAltitude(Number(event.key));
       if (!typing && event.key === "[") setAltitude(state.altitude - 1);
       if (!typing && event.key === "]") setAltitude(state.altitude + 1);
     });
@@ -360,15 +401,8 @@
     const preferred = localStorage.getItem("astrolabe-theme") || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
     applyTheme(preferred);
     $("#snapshotTime").textContent = SNAPSHOT.generatedAt ? new Date(SNAPSHOT.generatedAt).toLocaleString([], { dateStyle: "medium", timeStyle: "short" }) : "snapshot unavailable";
-    $("#liveTaskCount").textContent = String(SNAPSHOT.tasks.length);
-    $("#dashboardCount").textContent = String(SNAPSHOT.dashboards.length);
-    $("#conditionGate").textContent = String(SNAPSHOT.taskCounts?.gate ?? 0);
-    $("#conditionForge").textContent = String(SNAPSHOT.taskCounts?.forge ?? 0);
-    $("#conditionFlow").textContent = String(SNAPSHOT.taskCounts?.flow ?? 0);
-    $("#andonGate").textContent = String(SNAPSHOT.taskCounts?.gate ?? 0);
-    $("#andonSnapshot").textContent = SNAPSHOT.generatedAt ? `Generated ${new Date(SNAPSHOT.generatedAt).toLocaleString([], { dateStyle: "medium", timeStyle: "short" })}.` : "Snapshot unavailable.";
-    $("#sourceStamp").textContent = SNAPSHOT.source || "Vault snapshot";
-    renderPillars(); renderFleet(); renderMetrics(); renderBoard(); renderQuestions(); bind(); renderWing(); setAltitude(state.altitude); initThree();
+    $("#sourceStamp").textContent = SNAPSHOT.generatedAt ? new Date(SNAPSHOT.generatedAt).toLocaleDateString([], { month: "short", day: "numeric", year: "numeric" }) : "snapshot unavailable";
+    renderCompass(); renderDomains(); renderFleet(); renderMetrics(); renderBoard(); renderQuestions(); bind(); renderWing(); setAltitude(state.altitude); initThree();
     setTimeout(() => window.dispatchEvent(new Event("astrolabe-ready")), 0);
   }
 

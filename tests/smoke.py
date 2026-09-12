@@ -11,13 +11,38 @@ def run():
         page.on("pageerror", lambda error: errors.append(f"page:{error}"))
         page.goto("http://127.0.0.1:4173/.preview.html", wait_until="networkidle")
         page.locator('[data-panel="2"]').wait_for(state="visible")
-        assert page.locator(".pillar-node").count() == 10
+        assert page.locator(".altitude-btn").count() == 5
+        assert page.get_by_role("button", name="F1 Compass").count() == 1
+        assert page.get_by_role("button", name="F5 Momentum").count() == 1
+        assert page.get_by_role("button", name="F0 Ground").count() == 0
+        assert page.get_by_role("button", name="F6 Andon").count() == 0
+        assert page.locator(".domain-row").count() == 10
         snapshot = page.evaluate("window.ASTRO_SNAPSHOT")
+
+        page.get_by_role("button", name="F1 Compass").click()
+        page.locator('[data-panel="1"]').wait_for(state="visible")
+        assert page.locator(".value-label").count() == 5
+        assert page.locator(".readout-cell").count() == 5
+        page.wait_for_timeout(500)
+        page.screenshot(path="/tmp/astrolabe-f1.png", full_page=True)
+
+        page.get_by_role("button", name="F3 Monocle").click()
+        page.locator('[data-panel="3"]').wait_for(state="visible")
         assert page.locator(".fleet-item").count() == len(snapshot["dashboards"])
+        page.wait_for_timeout(500)
+        page.screenshot(path="/tmp/astrolabe-f3.png", full_page=True)
+
+        page.get_by_role("button", name="F4 Lens").click()
+        page.locator('[data-panel="4"]').wait_for(state="visible")
+        assert page.locator(".metric-row").count() == page.evaluate("window.ASTRO_METRICS.length")
+        page.wait_for_timeout(500)
+        page.screenshot(path="/tmp/astrolabe-f4.png", full_page=True)
 
         page.get_by_role("button", name="F5 Momentum").click()
         page.locator('[data-panel="5"]').wait_for(state="visible")
         assert page.locator(".task-card").count() == len(snapshot["tasks"])
+        assert page.locator(".flow-stage").count() == 3
+        assert page.locator(".priority-row").count() == 3
         page.locator(".task-card").first.click()
         page.locator("#drawer.open").wait_for(state="visible")
         page.locator("#drawerClose").click()
@@ -41,9 +66,9 @@ def run():
         browser.close()
 
     assert not errors, "\n".join(errors)
-    for path in ("/tmp/astrolabe-desktop.png", "/tmp/astrolabe-mobile.png"):
+    for path in ("/tmp/astrolabe-f1.png", "/tmp/astrolabe-f3.png", "/tmp/astrolabe-f4.png", "/tmp/astrolabe-desktop.png", "/tmp/astrolabe-mobile.png"):
         assert Path(path).stat().st_size > 20_000
-    print(f"smoke: {len(snapshot['dashboards'])} dashboards, {len(snapshot['tasks'])} active tasks, seven altitudes, drawer, palette, themes, desktop/mobile PASS")
+    print(f"smoke: {len(snapshot['dashboards'])} dashboards, {len(snapshot['tasks'])} active tasks, five visual altitudes, drawer, palette, themes, desktop/mobile PASS")
 
 
 if __name__ == "__main__":

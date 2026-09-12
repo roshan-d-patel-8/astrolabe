@@ -1,18 +1,16 @@
 # The Astrolabe
 
-The unified interface for Roshan's Axis Mundi: seven Focus Mundi altitudes, two wings, ten life and work domains, the dashboard fleet, a bowling chart, and the active TaskNotes board in one persistent spatial workspace.
+The unified visual-management interface for Roshan's Axis Mundi: five Focus Mundi altitudes, two wings, ten life and work domains, the dashboard fleet, a bowling chart, and the active TaskNotes board in one persistent spatial workspace.
 
 ## Product model
 
-- **F0 Ground** — presence and the RAIN reset.
 - **F1 Compass** — Polaris, mission, vision, and value dyads.
 - **F2 Cartography** — an interactive Hathi/Skoll domain constellation.
-- **F3 Monocle** — current condition and all 28 dashboard instruments.
-- **F4 Lens** — pillar-anchored DRIVE/WATCH/LOOP measures.
-- **F5 Momentum** — the live-at-build TaskNotes `gate → forge → flow` board.
-- **F6 Andon** — capacity gates and leader standard work.
+- **F3 Monocle** — dashboard-instrument currency plotted by system and refresh age.
+- **F4 Lens** — directly labeled condition small multiples for DRIVE/WATCH/LOOP measures.
+- **F5 Momentum** — TaskNotes flow, priority distribution, and the live-at-build `gate → forge → flow` board.
 
-The altitude rail changes the granularity without changing the underlying context. Selecting a domain or task writes its lineage into the persistent trace strip. `/` opens global search; `0`–`6`, `[` and `]` navigate scale.
+The altitude rail changes the granularity without changing the underlying context. The interface follows a high-data-ink visual grammar: aligned baselines, small multiples, direct labels, restrained signal color, and detail on demand. Selecting a domain or task writes its lineage into the persistent trace strip. `/` opens global search; `1`–`5`, `[` and `]` navigate scale.
 
 ## Vault sync contract
 
