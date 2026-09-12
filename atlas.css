@@ -1603,3 +1603,285 @@ textarea {
     display: none !important;
   }
 }
+/* Contextual instrument navigation and the connected planning surface. */
+#instrumentShelf {
+  margin: 12px 0 32px;
+  border-block: 1px solid var(--line);
+  padding: 18px 0;
+}
+.instrument-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 14px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.instrument-heading h2 {
+  font-size: 20px;
+  color: var(--ink);
+  font-weight: 500;
+  margin: 4px 0;
+}
+.instrument-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0 24px;
+  overflow: visible;
+}
+.instrument-grid:not(.expanded) .instrument-card:nth-child(n + 4) {
+  display: none;
+}
+.instrument-card {
+  background: transparent;
+  color: var(--ink);
+  border: 0;
+  border-top: 1px solid var(--line);
+  padding: 12px 0;
+  text-align: left;
+  display: grid;
+  gap: 5px;
+  cursor: pointer;
+  align-content: start;
+  min-width: 0;
+}
+.instrument-card > b {
+  font-size: 15px;
+  font-weight: 600;
+}
+.instrument-card > span:not(.instrument-levels),
+.instrument-card small {
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--muted);
+}
+.instrument-card:hover > b,
+.instrument-link:hover {
+  color: var(--accent);
+}
+.instrument-levels {
+  display: flex;
+  gap: 4px;
+}
+.instrument-levels i {
+  font-style: normal;
+  font-size: 10px;
+  display: grid;
+  place-items: center;
+  width: 17px;
+  height: 17px;
+  color: var(--muted);
+  border-bottom: 2px solid var(--line);
+}
+.instrument-levels i.mapped {
+  border-color: var(--accent);
+}
+.instrument-levels i.current {
+  background: var(--accent);
+  color: var(--paper);
+}
+.instrument-link {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  color: var(--ink);
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 12px 0;
+  cursor: pointer;
+  font: inherit;
+}
+.instrument-link small {
+  display: block;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.instrument-workspace {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  background: var(--paper);
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+}
+.instrument-workspace[hidden] {
+  display: none;
+}
+.instrument-workspace > header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 28px;
+  border-bottom: 1px solid var(--line);
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.instrument-workspace a {
+  color: var(--accent);
+  font-size: 13px;
+}
+.instrument-intro {
+  padding: 16px 28px 8px;
+}
+.instrument-intro h2 {
+  font-size: 28px;
+  font-weight: 500;
+  margin: 0 0 5px;
+}
+.instrument-intro p {
+  margin: 6px 0 10px;
+}
+#instrumentRoutes {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+#instrumentFrame {
+  border: 0;
+  border-top: 1px solid var(--line);
+  width: 100%;
+  flex: 1;
+  min-height: 50vh;
+  background: #102329;
+}
+#planningStrip {
+  margin: 0 0 24px;
+}
+.planning-controls {
+  display: flex;
+  gap: 18px;
+  align-items: end;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+.planning-controls label,
+.edit-grid label,
+#taskEditor > label,
+#createWork label {
+  display: grid;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.planning-controls select,
+.edit-grid input,
+.edit-grid select,
+#taskEditor input,
+#createWork input,
+#createWork select {
+  background: var(--paper);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 9px;
+  font: inherit;
+  max-width: 100%;
+  min-width: 0;
+}
+.project-row {
+  display: grid;
+  grid-template-columns: minmax(100px, 1fr) 1fr minmax(180px, auto);
+  align-items: center;
+  gap: 18px;
+  width: 100%;
+  background: none;
+  color: var(--ink);
+  border: 0;
+  border-top: 1px solid var(--line);
+  padding: 12px 0;
+  text-align: left;
+  cursor: pointer;
+  font-size: 12px;
+}
+.project-row b {
+  overflow-wrap: anywhere;
+  font-weight: 500;
+}
+.project-row.selected b {
+  color: var(--accent);
+}
+.project-counts {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  color: var(--muted);
+}
+.project-counts b {
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.project-bars {
+  display: flex;
+  gap: 3px;
+  height: 8px;
+}
+.project-bars i.gate {
+  background: var(--gate);
+}
+.project-bars i.forge {
+  background: var(--forge);
+}
+.project-bars i.flow {
+  background: var(--flow);
+}
+.edit-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+#taskEditor > .primary-btn,
+#createWork > .primary-btn {
+  margin-top: 16px;
+}
+#createWork {
+  display: grid;
+  gap: 12px;
+}
+@media (max-width: 800px) {
+  .instrument-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .instrument-grid:not(.expanded) .instrument-card:nth-child(n + 3) {
+    display: none;
+  }
+  .instrument-workspace > header,
+  .instrument-intro {
+    padding: 14px 18px;
+  }
+}
+@media (max-width: 520px) {
+  .instrument-grid {
+    grid-template-columns: 1fr;
+  }
+  .instrument-grid:not(.expanded) .instrument-card:nth-child(n + 2) {
+    display: none;
+  }
+  .instrument-heading h2 {
+    font-size: 18px;
+  }
+  .project-row {
+    gap: 8px;
+    grid-template-columns: 1fr 1fr;
+  }
+  .project-counts {
+    grid-column: 1/-1;
+  }
+  .planning-controls {
+    gap: 12px;
+  }
+  .instrument-workspace a {
+    font-size: 12px;
+  }
+}
+.instrument-grid.expanded {
+  max-height: none;
+  overflow: visible;
+}
+#expandInstruments {
+  margin-top: 12px;
+}

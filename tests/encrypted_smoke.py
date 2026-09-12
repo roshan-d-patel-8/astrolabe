@@ -32,7 +32,9 @@ def run():
         assert page.locator(".altitude-btn").count() == 5
         assert page.locator(".domain-row").count() == 10
         assert page.locator(".task-card").count() == len(page.evaluate("window.ASTRO_SNAPSHOT.tasks"))
-        assert page.locator('link[href="atlas.css?v=3.0.0"]').count() == 1
+        assert page.locator('link[href="atlas.css?v=4.0.0"]').count() == 1
+        assert page.locator('#instrumentShelf .instrument-card').count() > 0
+        assert page.evaluate('typeof window.ASTRO_CONNECTION') == 'undefined'
         assert page.evaluate("getComputedStyle(document.documentElement).getPropertyValue('--rail').trim()") in {"216px", "174px", "0px"}
         if os.environ.get("ASTROLABE_TEST_URL"):
             page.set_viewport_size({"width": 1440, "height": 1100})

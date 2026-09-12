@@ -30,14 +30,14 @@
       name: "Cartography",
       short: "Where",
       question: "Where?",
-      detail: "Ten domains · one field of view",
+      detail: "Strategy · mental models · ten domains",
     },
     {
       n: 3,
       name: "The Real",
       short: "What",
       question: "What is true?",
-      detail: "Instrument currency · system condition",
+      detail: "Reality · lived experience · source evidence",
     },
     {
       n: 4,
@@ -154,6 +154,7 @@
     document.body.dataset.altitude = String(state.altitude);
     renderRail();
     renderScope();
+    renderInstruments();
     updateScrollHints();
     window.dispatchEvent(
       new CustomEvent("astrolabe-altitude", { detail: state.altitude }),
@@ -198,6 +199,7 @@
   }
 
   function renderScope() {
+    renderInstruments();
     const domain = PILLARS.find((p) => p.id === state.domain);
     const filters = [
       domain?.name,
@@ -252,6 +254,15 @@
   }
 
   function pillarForTask(task) {
+    const canonical = (task.realms || []).join(" ").toLowerCase();
+    const exact = [
+      ["people", "people"],
+      ["access", "availability"],
+      ["quality", "quality"],
+      ["experience", "experience"],
+      ["financial", "financial"],
+    ].find(([, word]) => canonical.includes(word));
+    if (exact) return PILLARS.find((p) => p.id === exact[0]);
     const text =
       `${task.title} ${readableRealm(task.realms)} ${(task.tags || []).join(" ")}`.toLowerCase();
     const rules = [
@@ -365,6 +376,17 @@
     );
     $("#domainMeasures").onclick = () => focusDomain(id, 4);
     $("#domainTasks").onclick = () => focusDomain(id, 5);
+    $("#drawerBody").insertAdjacentHTML(
+      "beforeend",
+      `<section class="drawer-section"><h3>Instruments for ${esc(p.name)}</h3>${SNAPSHOT.dashboards
+        .filter((d) => !d.domains?.length || d.domains.includes(id))
+        .map(
+          (d) =>
+            `<button class="instrument-link" data-open-instrument="${esc(d.key)}">${esc(d.title)} <small>${esc(d.purpose)}</small></button>`,
+        )
+        .join("")}</section>`,
+    );
+    bindInstruments($("#drawerBody"));
   }
 
   function dashboardGroup(dashboard) {
@@ -427,10 +449,11 @@
       (sorted
         .map((d) => {
           const age = dashboardAge(d);
-          return `<a class="fleet-item" href="${esc(d.uri)}" data-dashboard="${esc(d.title)}"><b>${esc(d.title)}</b><span class="fleet-group">${esc(dashboardGroup(d))}</span><span class="age-track ${age.days === null ? "unknown" : ""}" style="--age:${(Math.min(age.days ?? 0, 90) / 90) * 100}%" aria-hidden="true"><i></i></span><small>${age.days === null ? "—" : esc(age.label)}</small></a>`;
+          return `<a class="fleet-item" href="${esc(d.uri)}" data-open-instrument="${esc(d.key)}" data-dashboard="${esc(d.title)}"><b>${esc(d.title)}</b><span class="fleet-group">${esc(dashboardGroup(d))}</span><span class="age-track ${age.days === null ? "unknown" : ""}" style="--age:${(Math.min(age.days ?? 0, 90) / 90) * 100}%" aria-hidden="true"><i></i></span><small>${age.days === null ? "—" : esc(age.label)}</small></a>`;
         })
         .join("") ||
         '<div class="empty-state">No matching instruments. Try a different name.</div>');
+    bindInstruments($("#fleetGrid"));
   }
 
   function renderMetrics() {
@@ -468,6 +491,7 @@
   }
 
   function taskMatches(task) {
+    if (!planningMatch(task)) return false;
     if (state.wing === "h") return false;
     if (state.domain && pillarForTask(task)?.id !== state.domain) return false;
     const query = state.taskQuery.trim().toLowerCase();
@@ -478,6 +502,7 @@
   }
 
   function renderBoard() {
+    renderPlanning();
     const scoped = SNAPSHOT.tasks.filter(taskMatches);
     const tasks = scoped
       .filter(
@@ -600,12 +625,13 @@
           `${esc(pillar?.name || "Unmapped")} · ${esc(pillar?.dyad || "No dyad assigned")}<p class="data-note">Keyword-based suggestion, not a canonical TaskNotes assignment.</p>`,
         ],
         [
-          "Sync contract",
-          "This page is an encrypted read model. Change status, dates, and context in the TaskNotes note; the next Astrolabe build will ingest it.",
+          "Project",
+          esc(task.parentProject || "Unassigned · no canonical project link"),
         ],
       ],
       uri: task.uri,
     });
+    renderTaskEditor(task);
   }
 
   function openDrawer(content) {
@@ -672,7 +698,7 @@
         title: d.title,
         detail: dashboardGroup(d),
         action: () => {
-          location.href = d.uri;
+          openInstrument(d.key);
         },
       })),
       ...SNAPSHOT.tasks.map((t) => ({
@@ -931,6 +957,8 @@
       state.stage = null;
       state.priority = null;
       state.wing = "both";
+      planWindow = "all";
+      planProject = "all";
       resetTrace();
       storage.set("astrolabe-wing", "both");
       renderWing();
@@ -1012,7 +1040,348 @@
     });
   }
 
+  // Each focus is a way into the same instruments, never a disconnected dashboard directory.
+  function bindInstruments(root) {
+    $$("[data-open-instrument]", root).forEach(
+      (button) =>
+        (button.onclick = (event) => {
+          event.preventDefault();
+          if (activeLayer) closeDrawer();
+          openInstrument(button.dataset.openInstrument);
+        }),
+    );
+  }
+  function renderInstruments() {
+    if (!$("#instrumentShelf")) return;
+    const domain = PILLARS.find((p) => p.id === state.domain);
+    const preferred = [
+      [],
+      ["Chronos and Kairos", "SOUL Codex", "The Middle Way"],
+      ["The Latticework", "The Arch", "Axis Mundi Cockpit", "The Orrery"],
+      [
+        "Chronos and Kairos",
+        "The Triskelion Helm",
+        "The Garden",
+        "Kiroshi Optics",
+      ],
+      ["The Dojo Wall", "The Latticework", "Kiroshi Optics"],
+      [
+        "Chronos and Kairos",
+        "The Forge Floor",
+        "The Dojo Wall",
+        "The Shield Wall",
+      ],
+    ][state.altitude];
+    const records = SNAPSHOT.dashboards
+      .filter(
+        (d) =>
+          d.levels?.includes(state.altitude) &&
+          (state.wing === "both" ||
+            !d.domains.length ||
+            d.domains.some(
+              (id) => PILLARS.find((p) => p.id === id)?.w === state.wing,
+            )) &&
+          (!domain || !d.domains.length || d.domains.includes(domain.id)),
+      )
+      .sort(
+        (a, b) =>
+          (preferred.includes(a.key) ? preferred.indexOf(a.key) : -1 + 100) -
+          (preferred.includes(b.key) ? preferred.indexOf(b.key) : -1 + 100),
+      );
+    const prompts = [
+      "",
+      "Meaning in practice",
+      "Models for the territory",
+      "Observe before interpreting",
+      "Interpret, compare, experiment",
+      "Plan against reality",
+    ];
+    $("#instrumentShelf").innerHTML =
+      `<div class="instrument-heading"><h2>${prompts[state.altitude]}</h2><span>${domain ? esc(domain.name) : state.wing === "h" ? "Hathi" : state.wing === "s" ? "Skoll" : "Whole system"} · ${records.length} instruments</span></div><div class="instrument-grid">${records.map((d) => `<button class="instrument-card" data-open-instrument="${esc(d.key)}"><span class="instrument-levels" aria-label="Available at focus levels ${d.levels.join(", ")}">${[1, 2, 3, 4, 5].map((n) => `<i class="${d.levels.includes(n) ? "mapped" : ""} ${n === state.altitude ? "current" : ""}">${n}</i>`).join("")}</span><b>${esc(d.title)}</b><span>${esc(d.purpose)}</span><small>${d.archived ? "Archived · " : ""}${d.runtimeBlocks ? "Obsidian queries + captured content" : "Captured source"} · ${esc(d.refreshed || "undated")}</small></button>`).join("")}</div>`;
+    bindInstruments($("#instrumentShelf"));
+    $("#instrumentShelf").insertAdjacentHTML(
+      "beforeend",
+      `<button id="expandInstruments" class="ghost-btn" aria-expanded="false">Show all ${records.length} instruments</button>`,
+    );
+    $("#expandInstruments").onclick = () => {
+      const grid = $("#instrumentShelf .instrument-grid");
+      const expanded = grid.classList.toggle("expanded");
+      $("#expandInstruments").setAttribute("aria-expanded", String(expanded));
+      $("#expandInstruments").textContent = expanded
+        ? "Compact view"
+        : `Show all ${records.length} instruments`;
+    };
+  }
+  function openInstrument(key) {
+    const d = SNAPSHOT.dashboards.find((item) => item.key === key);
+    if (!d) return;
+    const panel = $("#instrumentWorkspace");
+    $("#instrumentTitle").textContent = d.title;
+    $("#instrumentPurpose").textContent = d.purpose;
+    $("#instrumentSource").href = d.uri;
+    $("#instrumentCaveat").textContent =
+      `Read-only source capture · ${d.refreshed || "source date unknown"}. ${d.runtimeBlocks ? `${d.runtimeBlocks} live-query/base sections require Obsidian. ` : ""}Scripts, media, and embedded-note interaction stay in the canonical note; a refreshed page is not proof of fresh underlying data.`;
+    $("#instrumentFrame").srcdoc = d.preview;
+    $("#instrumentRoutes").innerHTML = d.levels
+      .map(
+        (n) =>
+          `<button class="ghost-btn" data-instrument-level="${n}">F${n} · ${esc(ALTITUDES[n - 1].name)}</button>`,
+      )
+      .join("");
+    if (d.successor)
+      $("#instrumentRoutes").insertAdjacentHTML(
+        "beforeend",
+        `<a class="ghost-btn" href="${esc(d.successor)}">Open 2027 successor</a>`,
+      );
+    $$("[data-instrument-level]").forEach(
+      (b) =>
+        (b.onclick = () => {
+          closeInstrument();
+          setAltitude(Number(b.dataset.instrumentLevel));
+        }),
+    );
+    panel.hidden = false;
+    openLayer(panel, $("#instrumentBack"));
+  }
+  function closeInstrument() {
+    const panel = $("#instrumentWorkspace");
+    panel.hidden = true;
+    $("#instrumentFrame").srcdoc = "";
+    closeLayer(panel);
+  }
+
+  let planWindow = "all",
+    planProject = "all";
+  const pacificToday = () =>
+    new Intl.DateTimeFormat("en-CA", {
+      timeZone: "America/Los_Angeles",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).format(new Date());
+  function planningMatch(t, ignoreProject = false) {
+    if (
+      !ignoreProject &&
+      planProject !== "all" &&
+      (t.parentProject || "") !== planProject
+    )
+      return false;
+    const today = pacificToday(),
+      due = (t.due || "").slice(0, 10),
+      scheduled = (t.scheduled || "").slice(0, 10);
+    if (planWindow === "overdue") return !!due && due < today;
+    if (planWindow === "today") return due === today || scheduled === today;
+    if (planWindow === "undated") return !due && !scheduled;
+    if (planWindow === "week") {
+      const end = new Date(today + "T12:00:00Z");
+      end.setUTCDate(end.getUTCDate() + 6);
+      return [due, scheduled].some(
+        (d) => d && d >= today && d <= end.toISOString().slice(0, 10),
+      );
+    }
+    return true;
+  }
+  function renderPlanning() {
+    if (!$("#planningStrip")) return;
+    const tasks = SNAPSHOT.tasks.filter(
+      (t) =>
+        t.type !== "project" &&
+        state.wing !== "h" &&
+        (!state.domain || pillarForTask(t)?.id === state.domain) &&
+        planningMatch(t, true),
+    );
+    const groups = [
+      ...new Set([
+        ...tasks.map((t) => t.parentProject || ""),
+        ...(SNAPSHOT.projects || []).map((p) => "[[" + p.title + "]]"),
+      ]),
+    ].sort();
+    const options = [
+      ["all", "All projects"],
+      ...groups.map((p) => [p, p.replace(/\[\[|\]\]/g, "") || "Unassigned"]),
+    ];
+    $("#projectFilter").innerHTML = options
+      .map(
+        ([id, title]) =>
+          `<option value="${esc(id)}" ${id === planProject ? "selected" : ""}>${esc(title)}</option>`,
+      )
+      .join("");
+    $("#projectReadout").innerHTML =
+      groups
+        .map((project) => {
+          const members = tasks.filter(
+            (t) => (t.parentProject || "") === project,
+          );
+          return `<button class="project-row ${project === planProject ? "selected" : ""}" data-project="${esc(project)}"><b>${esc(project.replace(/\[\[|\]\]/g, "") || "Unassigned")} · ${members.length} active</b><span class="project-bars" aria-hidden="true">${["gate", "forge", "flow"].map((s) => `<i class="${s}" style="flex:${members.filter((t) => t.status === s).length}"></i>`).join("")}</span><span class="project-counts">${["gate", "forge", "flow"].map((s) => `<span>${stageLabel[s]} <b>${members.filter((t) => t.status === s).length}</b></span>`).join("")}</span></button>`;
+        })
+        .join("") +
+      '<p class="data-note">Project counts follow wing, domain, and date window; stage/priority filters apply to the board below. Canonical parentProject links only. Bars show counts, not completion percentages.</p>';
+    $$("[data-project]").forEach(
+      (b) =>
+        (b.onclick = () => {
+          planProject = b.dataset.project;
+          renderBoard();
+        }),
+    );
+    $("#dateFilter").value = planWindow;
+  }
+  function refreshReadModel(snapshot) {
+    Object.assign(SNAPSHOT, snapshot);
+    renderCompass();
+    renderDomains();
+    renderFleet();
+    renderBoard();
+    renderInstruments();
+    $("#snapshotTime").textContent = new Date(
+      snapshot.generatedAt,
+    ).toLocaleString();
+    $("#connectionState").textContent =
+      "Connected to this Mac · canonical TaskNotes read just now";
+  }
+  async function api(path, options = {}) {
+    const response = await fetch(path, {
+      ...options,
+      headers: {
+        "Content-Type": "application/json",
+        "X-Astrolabe-Token": window.ASTRO_CONNECTION.token,
+      },
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "Request failed");
+    return data;
+  }
+  function renderTaskEditor(task) {
+    const linked = !!window.ASTRO_CONNECTION;
+    $("#drawerBody").insertAdjacentHTML(
+      "beforeend",
+      `<section class="drawer-section"><h3>${linked ? "Edit canonical TaskNotes" : "Published snapshot"}</h3>${
+        linked
+          ? `<form id="taskEditor"><div class="edit-grid"><label>Status<select name="status">${["gate", "forge", "flow", "done"].map((s) => `<option ${s === task.status ? "selected" : ""}>${s}</option>`).join("")}</select></label><label>Priority<select name="priority">${["high", "normal", "low", "none"].map((s) => `<option ${s === task.priority ? "selected" : ""}>${s}</option>`).join("")}</select></label><label>Scheduled<input type="date" name="scheduled" value="${esc((task.scheduled || "").slice(0, 10))}"></label><label>Due<input type="date" name="due" value="${esc((task.due || "").slice(0, 10))}"></label></div><label>Parent project · canonical wikilink<input name="parentProject" list="projectNames" placeholder="[[Project note name]]" value="${esc(task.parentProject)}"></label><datalist id="projectNames">${(
+              SNAPSHOT.projects || []
+            )
+              .map((t) => `<option value="${esc("[[" + t.title + "]]")}">`)
+              .join(
+                "",
+              )}</datalist><button class="primary-btn" type="submit">Save to canonical note</button><p class="data-note">Saved only after confirmation from this Mac. Concurrent Obsidian edits are rejected; prior content is retained in local backups.</p><p id="editResult" role="status"></p></form>`
+          : '<p>Edits require the loopback companion on this Mac. The public site never receives a vault write credential.</p><a href="http://127.0.0.1:8795/" target="_blank" rel="noopener">Open connected workspace</a>'
+      }</section>`,
+    );
+    if (linked)
+      $("#taskEditor").onsubmit = async (event) => {
+        event.preventDefault();
+        const button = $("#taskEditor button");
+        button.disabled = true;
+        try {
+          const changes = Object.fromEntries(new FormData(event.target));
+          const next = await api("/api/tasks/" + task.id, {
+            method: "PATCH",
+            body: JSON.stringify({ revision: task.revision, changes }),
+          });
+          refreshReadModel(next);
+          closeDrawer();
+        } catch (error) {
+          $("#editResult").textContent = error.message;
+        } finally {
+          button.disabled = false;
+        }
+      };
+  }
+  function initIntegration() {
+    const firstPanel = $(".panel");
+    firstPanel.insertAdjacentHTML(
+      "beforebegin",
+      '<section id="instrumentShelf" aria-label="Contextual instruments"></section>',
+    );
+    document.body.insertAdjacentHTML(
+      "beforeend",
+      `<section id="instrumentWorkspace" class="instrument-workspace" hidden inert aria-labelledby="instrumentTitle"><header><button id="instrumentBack" class="ghost-btn">Back to focus</button><a id="instrumentSource">Open canonical Obsidian note</a></header><div class="instrument-intro"><h2 id="instrumentTitle"></h2><p id="instrumentPurpose"></p><nav id="instrumentRoutes" aria-label="Related focus levels"></nav><p id="instrumentCaveat" class="data-note"></p></div><iframe id="instrumentFrame" title="Isolated read-only dashboard capture" sandbox="" referrerpolicy="no-referrer"></iframe></section>`,
+    );
+    $("#instrumentBack").onclick = closeInstrument;
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && !$("#instrumentWorkspace").hidden)
+        closeInstrument();
+    });
+    $('[data-panel="5"] .evidence-grid')?.insertAdjacentHTML("afterbegin", "");
+    $('[data-panel="5"]').insertAdjacentHTML(
+      "afterbegin",
+      `<section id="planningStrip"><div class="planning-controls"><label>Time window<select id="dateFilter"><option value="all">All dates</option><option value="today">Today · Pacific</option><option value="week">Next seven days</option><option value="overdue">Overdue</option><option value="undated">Undated</option></select></label><label>Project<select id="projectFilter"></select></label><button id="newWork" class="primary-btn">Create task / project</button></div><div id="projectReadout"></div><p id="connectionState" class="data-note" role="status">${window.ASTRO_CONNECTION ? "Connected workspace · reading canonical TaskNotes" : "Published snapshot · read-only. Use the local companion for edits and refreshes."}</p></section>`,
+    );
+    $("#dateFilter").onchange = (e) => {
+      planWindow = e.target.value;
+      renderBoard();
+    };
+    $("#projectFilter").onchange = (e) => {
+      planProject = e.target.value;
+      renderBoard();
+    };
+    $("#newWork").onclick = () => {
+      if (!window.ASTRO_CONNECTION) {
+        openDrawer({
+          title: "Connect to canonical TaskNotes",
+          intro:
+            "Start companion.py on this Mac, then open the connected workspace.",
+          sections: [
+            [
+              "This Mac only",
+              '<a href="http://127.0.0.1:8795/" target="_blank" rel="noopener">Open connected workspace</a><p>No public write API. No duplicate task store.</p>',
+            ],
+          ],
+        });
+        return;
+      }
+      openDrawer({
+        title: "Create canonical work",
+        intro:
+          "Use a task with a concrete 15–20 minute endpoint, or a project for a larger outcome.",
+        sections: [
+          [
+            "New note",
+            '<form id="createWork"><label>Type<select name="type"><option value="task">Task</option><option value="project">Project</option></select></label><label>Skoll domain<select name="realm"><option>Skoll</option><option>Skoll - People and Culture</option><option>Skoll - Care Availability</option><option>Skoll - Quality and Safety</option><option>Skoll - Care Experience</option><option>Skoll - Financial Health</option></select></label><label>Title<input name="title" required maxlength="160"></label><button type="submit" class="primary-btn">Create in TaskNotes</button><p id="createResult" role="status"></p></form>',
+          ],
+        ],
+      });
+      $("#createWork").onsubmit = async (event) => {
+        event.preventDefault();
+        const button = event.target.querySelector("button");
+        button.disabled = true;
+        try {
+          refreshReadModel(
+            await api("/api/tasks", {
+              method: "POST",
+              body: JSON.stringify(
+                Object.fromEntries(new FormData(event.target)),
+              ),
+            }),
+          );
+          closeDrawer();
+        } catch (error) {
+          $("#createResult").textContent = error.message;
+        } finally {
+          button.disabled = false;
+        }
+      };
+    };
+    if (window.ASTRO_CONNECTION) {
+      let reading = false;
+      const poll = async () => {
+        if (reading || activeLayer || document.hidden) return;
+        reading = true;
+        try {
+          refreshReadModel(await api("/api/snapshot"));
+        } catch (error) {
+          $("#connectionState").textContent =
+            "Disconnected · displayed data may be stale. " + error.message;
+        } finally {
+          reading = false;
+        }
+      };
+      window.addEventListener("focus", poll);
+      setInterval(poll, 60000);
+    }
+  }
+
   function init() {
+    initIntegration();
     $("#searchButton").insertAdjacentHTML(
       "afterbegin",
       icon('<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/>'),

@@ -190,7 +190,15 @@ Whole-row buttons combine identity, a two-line description, status evidence, and
 
 Three equal controls pair a large count with a small stage label. Hover adds raised fill. Selection uses an accent outline (1px) and `aria-pressed`; clicking an already selected stage clears that filter. The selected outline also remains (1px) when focused because the source selected-state selector overrides the global focus width; the focus offset remains (4px).
 
-The sidecar includes five self-contained visual previews. They represent static states and CSS interaction; application navigation and filtering remain in `app.js`.
+### Contextual instruments
+
+An open shelf uses complete rows: three records on desktop, two at or below (800px), one at or below (520px). Explicit expansion reveals the remaining records; never clip a row to suggest more content. Focus-level marks describe routes, not measured scores. Wing/domain scope sits beside the heading. A source workspace replaces the viewport while retaining a return action and related focus routes. Its isolated capture preserves the source dashboard's visual language; the surrounding controls follow the Astrolabe theme. Capture and runtime limitations remain visible.
+
+### Project planning
+
+Date and project selectors are compact field variants with paper fill, (4px) radius, and (9px) padding. Open project rows pair a proportional Gate/Forge/Flow strip with visible stage names and exact counts, using the existing stage-color tokens. Project evidence follows wing, domain, and date scope; labels distinguish subsequent board filters. Connected editing uses the existing drawer and compact fields, with explicit submission and inline errors. Public read-only and local connected status are visibly distinguished.
+
+The sidecar includes five self-contained visual previews of the incumbent primitives. They represent static states and CSS interaction; application navigation and filtering remain in `app.js`. The instrument and planning extensions reuse those primitives without changing the token system.
 
 ## Do's and Don'ts
 

@@ -21,6 +21,7 @@ import argparse, base64, datetime, hashlib, html, json, os, re, subprocess, sys
 from pathlib import Path
 
 import yaml
+from instruments import instrument
 
 HERE = Path(__file__).resolve().parent
 PBKDF2_ITERS = 310000  # must match template.html
@@ -108,10 +109,12 @@ def _obsidian_uri(relative_path):
     return "obsidian://open?vault=_R0&file=" + quote(str(relative_path.with_suffix("")), safe="")
 
 
-def task_snapshot():
+def task_snapshot(include_projects=False):
     records = []
     for path in sorted(TASKS.glob("*.md")):
         meta, body = _frontmatter(path)
+        if str(meta.get('type', '')).lower() == 'project' and not include_projects:
+            continue
         status = str(meta.get("status", "gate")).lower()
         if status not in {"gate", "forge", "flow"}:
             continue
@@ -123,6 +126,7 @@ def task_snapshot():
         excerpt = re.sub(r"\s+", " ", re.sub(r"<[^>]+>|\[\[[^\]]+\]\]", " ", body)).strip()[:220]
         records.append({
             "id": hashlib.sha1(str(path.relative_to(VAULT)).encode()).hexdigest()[:10],
+            "revision": hashlib.sha256(path.read_bytes()).hexdigest(),
             "title": title,
             "status": status,
             "priority": str(meta.get("priority", "normal")).lower(),
@@ -157,6 +161,7 @@ def dashboard_snapshot():
         if path.stem == "The Bridge":
             continue
         records.append({
+            **instrument(path, meta, body, VAULT),
             "title": title,
             "refreshed": str(meta.get("refreshed", "")),
             "tags": tags,
@@ -174,6 +179,7 @@ def vault_snapshot():
     return {
         "generatedAt": datetime.datetime.now().astimezone().isoformat(timespec="minutes"),
         "tasks": tasks,
+        "projects": [t for t in task_snapshot(include_projects=True) if t['type'] == 'project'],
         "taskCounts": counts,
         "dashboards": dashboards,
         "source": "TaskNotes/Views/kanban-default.base + Dashboards/",
