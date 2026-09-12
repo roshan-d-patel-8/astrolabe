@@ -1,5 +1,6 @@
 .DS_Store
 __pycache__/
 .preview.html
+.vendor/
 .impeccable/review/
 .impeccable/brief.md

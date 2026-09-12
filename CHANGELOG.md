@@ -3,6 +3,13 @@ tags: [ClaudeAI]
 ---
 # Changelog
 
+## 4.1.0 — 2026-09-12
+
+- Replaced raw Markdown captures with semantic headings, lists, tables, and native callout cards, wrapped in the Obsidian DOM structure required by all 28 dashboard designs.
+- Restored source typography and distinct dashboard palettes; added a web presentation layer for parchment contrast, narrow screens, dense maps, ledger spacing, and progressive disclosure.
+- Preserved source notes in a disclosure; explicitly labeled unavailable live queries without executing them. Added small, vault-local raster assets inside the encrypted capture; large assets remain source references. Only Google Fonts stylesheets and fonts may load externally, without a referrer.
+- Added private before/after desktop, mobile, and mid-page captures for all dashboards, renderer regression tests, and individual visual scores in the private vault audit.
+
 ## 4.0.0 — 2026-09-12
 
 - Integrated all 28 dashboard instruments through curated F1–F5/domain routes, global search, an in-site isolated source workspace, and canonical Obsidian links. Chronos and Kairos is reachable from F1, F3, and F5.

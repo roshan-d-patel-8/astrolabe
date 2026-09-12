@@ -19,7 +19,15 @@ The altitude rail changes granularity without changing the underlying context. T
 
 TaskNotes remains canonical. `build.py` applies the professional-task exclusions from `TaskNotes/Views/kanban-default.base`, ingests the active task files plus dashboard frontmatter, and embeds that snapshot inside the encrypted payload. The static GitHub Pages copy never pretends it can write directly to local Markdown: task and dashboard surfaces deep-link to their authoritative Obsidian notes.
 
-All 28 registered dashboard instruments have curated focus/domain routes in `instruments.py`. Their source HTML and CSS are captured inside the encrypted payload and opened in a sandboxed in-site workspace. Scripts, external media, and Obsidian query/base execution are unavailable in that capture and labeled accordingly. The canonical note remains available. New unmapped dashboards fail the build until given intentional relationships.
+All 28 registered dashboard instruments have curated focus/domain routes in `instruments.py`. Their Markdown is rendered into semantic HTML alongside their native HTML and CSS, inside the Obsidian-compatible preview containers each design expects. Captures remain encrypted and open in a sandboxed in-site workspace. Scripts, external media, large local assets, and Obsidian query/base execution are unavailable and labeled accordingly. Vault-local raster assets below 500 KB are embedded inside the encrypted payload. Source Google Fonts imports are allowlisted by CSP, with no referrer; fallback fonts work offline. The canonical note remains available. New unmapped dashboards fail the build until given intentional relationships.
+
+`instrument-base.css` provides browser equivalents of Obsidian typography and variables. `instrument-polish.css` handles web-specific contrast, responsive layouts, and readable scrollable maps without changing the canonical dashboard notes or CSS snippets. Source instructions and backlinks remain in a disclosure. Live-query placeholders are disclosures, not fabricated results.
+
+Install the pinned renderer dependency on a new Mac before building or starting connected mode:
+
+```bash
+python3 -m pip install --target .vendor -r requirements-renderer.txt
+```
 
 ### Connected mode on this Mac
 
@@ -46,6 +54,8 @@ Domain task counts are keyword-based suggestions. Unmatched tasks remain availab
 Serve the repository locally after a preview build, then run `tests/smoke.py`, `tests/makeover.py`, and `tests/encrypted_smoke.py`. The makeover suite checks all five altitudes across four widths and both themes, domain/wing filtering, count proportions including zero, modal focus, search, and blocked browser storage. The encrypted test uses the existing Keychain entry without logging its value.
 
 `tests/integration.py` verifies all instrument routes, Chronos in F1/F3/F5, source isolation, project/date filters, and public write boundaries. `tests/companion.py` creates a temporary fixture vault and verifies browser create/edit, note-body preservation, backups, conflicts, and Host/Origin/token/path/value rejection.
+
+`tests/dashboard_walkthrough.py final` captures all 28 instruments at desktop and mobile widths, plus a mid-page view, into the ignored private review directory. `tests/dashboard_renderer.py` checks rendered structure, mobile readability regressions, disclosure interaction, source isolation, and page overflow. Visual scores are human judgment recorded in the private audit, not an automated design certification.
 
 Impeccable's design guidance informed v3. Its CLI engine was unavailable in this environment; no automated Impeccable certification is claimed. The design review uses its craft-floor checklist.
 

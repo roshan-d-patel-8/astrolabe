@@ -1120,7 +1120,7 @@
     $("#instrumentPurpose").textContent = d.purpose;
     $("#instrumentSource").href = d.uri;
     $("#instrumentCaveat").textContent =
-      `Read-only source capture · ${d.refreshed || "source date unknown"}. ${d.runtimeBlocks ? `${d.runtimeBlocks} live-query/base sections require Obsidian. ` : ""}Scripts, media, and embedded-note interaction stay in the canonical note; a refreshed page is not proof of fresh underlying data.`;
+      `Read-only source capture · ${d.refreshed || "source date unknown"}. ${d.runtimeBlocks ? `${d.runtimeBlocks} live-query/base sections require Obsidian. ` : ""}Scripts, large media, and embedded-note interaction stay in the canonical note; a refreshed page is not proof of fresh underlying data.`;
     $("#instrumentFrame").srcdoc = d.preview;
     $("#instrumentRoutes").innerHTML = d.levels
       .map(

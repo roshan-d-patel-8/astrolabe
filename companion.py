@@ -106,7 +106,7 @@ def serve(port=8795):
             if not self.valid_host(): return self.send(403, {'error':'Invalid host'})
             route = self.path.split('?')[0]
             if route == '/api/health':
-                return self.send(200, {'service':'astrolabe','version':'4.0.0'})
+                return self.send(200, {'service':'astrolabe','version':'4.1.0'})
             if route == '/':
                 page = build.build_page(build.find_source().read_text())
                 config = '<script>window.ASTRO_CONNECTION=' + json.dumps({'token':token}) + ';</script>'
