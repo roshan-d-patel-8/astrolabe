@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Astrolabe</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🧭%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{--bg:#eef0f3;--ink:#1a2030;--muted:#5a6274;--line:#c9ced8;--panel:#f7f8fa;--brass:#9a6d1c;--brass-soft:#f1e7cf;--crit:#b23c34}
+@media (prefers-color-scheme:dark){:root{--bg:#0e1322;--ink:#e7e2d4;--muted:#9aa3b5;--line:#2a3350;--panel:#161c30;--brass:#d3a54e;--brass-soft:#2b2617;--crit:#e0625a}}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg);color:var(--ink);font:15px/1.5 "IBM Plex Sans","Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+.card{width:min(420px,92vw);background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--brass);border-radius:3px;padding:28px 28px 22px;box-shadow:0 1px 0 rgba(26,32,48,.06),0 8px 24px -16px rgba(26,32,48,.35)}
+.eyebrow{font-family:"IBM Plex Mono",Menlo,monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:"Cormorant Garamond",Garamond,"Times New Roman",serif;font-weight:500;font-size:44px;line-height:1.05;margin:4px 0 6px}
+h1 em{font-style:italic;color:var(--brass)}
+.sub{color:var(--muted);margin:0 0 18px;font-size:14px}
+input{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:2px;background:var(--bg);color:var(--ink);font:inherit}
+input:focus{outline:2px solid var(--brass);outline-offset:1px;border-color:var(--brass)}
+button{margin-top:10px;width:100%;padding:10px;border:1px solid var(--brass);border-radius:2px;background:var(--brass-soft);color:var(--ink);font-family:"IBM Plex Mono",Menlo,monospace;font-size:12px;letter-spacing:.06em;cursor:pointer}
+button:disabled{opacity:.6;cursor:wait}
+.err{color:var(--crit);font-family:"IBM Plex Mono",Menlo,monospace;font-size:12px;min-height:18px;margin-top:10px}
+.foot{margin-top:14px;font-family:"IBM Plex Mono",Menlo,monospace;font-size:11px;color:var(--muted)}
+.shake{animation:sh .35s}@keyframes sh{20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
+</style>
+</head>
+<body>
+<form class="card" id="gate" autocomplete="off">
+  <div class="eyebrow">Polaris · one house, two wings, seven altitudes</div>
+  <h1>The <em>Astrolabe</em></h1>
+  <p class="sub">This plate is private. Enter the passphrase, or open your magic link; either enrolls this device.</p>
+  <input type="password" id="pass" placeholder="passphrase" aria-label="passphrase" autofocus>
+  <button type="submit" id="unlock">Unlock</button>
+  <div class="err" id="err"></div>
+  <div class="foot">AES-256-GCM · decrypted in your browser · nothing leaves this page</div>
+</form>
+<script>
+"use strict";
+const BLOB = "__PAYLOAD__";
+const PBKDF2_ITERS = 310000;
+const KEY = "ast-pass";
+function b64ToBytes(b64){const bin=atob(b64);const a=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);return a}
+function fragmentPass(){
+  const m = location.hash.match(/[#&]k=([A-Za-z0-9_-]+={0,2})/);
+  if(!m) return null;
+  try{ return new TextDecoder().decode(b64ToBytes(m[1].replace(/-/g,"+").replace(/_/g,"/"))); }catch(_){ return null }
+}
+async function decrypt(pass){
+  const raw = b64ToBytes(BLOB);
+  const salt = raw.slice(0,16), nonce = raw.slice(16,28), ct = raw.slice(28);
+  const km = await crypto.subtle.importKey("raw", new TextEncoder().encode(pass), "PBKDF2", false, ["deriveKey"]);
+  const key = await crypto.subtle.deriveKey({name:"PBKDF2", salt, iterations:PBKDF2_ITERS, hash:"SHA-256"}, km, {name:"AES-GCM", length:256}, false, ["decrypt"]);
+  const pt = await crypto.subtle.decrypt({name:"AES-GCM", iv:nonce}, key, ct);
+  return new TextDecoder().decode(pt);
+}
+function boot(html){
+  // Replace this shell with the decrypted page; inline scripts execute on write.
+  document.open(); document.write(html); document.close();
+}
+document.getElementById("gate").addEventListener("submit", async (e)=>{
+  e.preventDefault();
+  const btn = document.getElementById("unlock"), err = document.getElementById("err");
+  const pass = document.getElementById("pass").value;
+  btn.disabled = true; err.textContent = "";
+  try{
+    const html = await decrypt(pass);
+    try{ localStorage.setItem(KEY, pass); }catch(_){}
+    boot(html);
+  }catch(_){
+    err.textContent = "That passphrase does not open this plate.";
+    const c = document.getElementById("gate"); c.classList.add("shake"); setTimeout(()=>c.classList.remove("shake"), 400);
+    btn.disabled = false;
+  }
+});
+(async ()=>{
+  const fromLink = fragmentPass();
+  if(fromLink){
+    try{ const html = await decrypt(fromLink); try{ localStorage.setItem(KEY, fromLink); }catch(_){} boot(html); return; }catch(_){}
+  }
+  let saved = null; try{ saved = localStorage.getItem(KEY) || sessionStorage.getItem(KEY); }catch(_){}
+  if(saved){
+    try{ boot(await decrypt(saved)); return; }
+    catch(_){ try{ localStorage.removeItem(KEY); sessionStorage.removeItem(KEY); }catch(_){} }
+  }
+})();
+</script>
+</body>
+</html>
