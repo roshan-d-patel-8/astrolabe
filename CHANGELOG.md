@@ -3,6 +3,13 @@ tags: [ClaudeAI]
 ---
 # Changelog
 
+## 5.0.0 — 2026-09-12
+
+- Replaced the generic application shell with a vault-derived personal observatory: obsidian, old gold, lapis, parchment, engraved navigation, semantic domain seals, and jewel-toned instrument bindings.
+- Added the user's original celestial astrolabe artwork inside the encrypted payload, a contextual five-plane dial, and whole-to-work navigation. Preserved F1–F5, The Real, all 28 instruments, source labels, and TaskNotes behavior.
+- Gave light mode a parchment treatment and defaulted new sessions to night mode while honoring saved choices. Kept WebGL confined to F1, restored it over the new artwork, and provided reduced-motion and blocked-CDN fallbacks.
+- Redesigned the unlock gate without exposing private art; condensed secondary planning explanations into a disclosure. Added identity-specific and private visual-walkthrough tests.
+
 ## 4.1.0 — 2026-09-12
 
 - Replaced raw Markdown captures with semantic headings, lists, tables, and native callout cards, wrapped in the Obsidian DOM structure required by all 28 dashboard designs.

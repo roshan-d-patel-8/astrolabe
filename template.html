@@ -6,7 +6,7 @@
 <title>The Astrolabe</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🧭%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,500;1,500&display=swap">
 <style>
 :root{--bg:#f4f5f1;--ink:#182c32;--muted:#53676b;--line:#ccd5d1;--panel:#fff;--brass:#826222;--brass-soft:#e9ece7;--crit:#b0413a}
 @media (prefers-color-scheme:dark){:root{--bg:#102329;--ink:#e3ede7;--muted:#a5b9bb;--line:#365057;--panel:#162d34;--brass:#ddbd78;--brass-soft:#203a41;--crit:#f49a8e}}
@@ -24,10 +24,24 @@ button:disabled{opacity:.6;cursor:wait}
 .err{color:var(--crit);font-size:13px;min-height:18px;margin-top:10px}
 .foot{margin-top:14px;font-size:12px;color:var(--muted)}
 .shake{animation:sh .35s}@keyframes sh{20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
+:root{--bg:#0c111c;--ink:#f0e3c5;--muted:#c0b194;--line:#716044;--panel:#151d2a;--brass:#d4b16a;--brass-soft:#272b32;--crit:#eeaa91}
+body{font-family:'Avenir Next',sans-serif;background:radial-gradient(ellipse at 50% 35%,#293245 0%,#101725 48%,#080c13 100%);padding:30px 0}
+.card{position:relative;width:min(460px,90vw);padding:38px;border:1px solid var(--brass);outline:1px solid #716044;outline-offset:7px;border-radius:190px 190px 2px 2px;box-shadow:0 24px 80px #0009,inset 0 0 0 6px #1d2634;text-align:center;background:linear-gradient(155deg,#222d3d,#101721 65%)}
+.gate-seal{display:block;width:108px;height:108px;margin:6px auto 24px;color:var(--brass)}
+.eyebrow{font:10px Cinzel,Georgia,serif;letter-spacing:.19em;margin-bottom:12px;color:var(--brass)}
+h1{font:500 32px/1.2 Cinzel,Georgia,serif;letter-spacing:0;margin-bottom:20px}
+.sub{font:500 20px/1.35 'Cormorant Garamond',Georgia,serif;margin-bottom:25px}
+input{text-align:center;border-radius:0;background:#0c111c;padding:13px}
+button{font:600 13px Cinzel,Georgia,serif;border:1px solid var(--brass);border-radius:0;letter-spacing:.05em;padding:15px}
+button:hover{background:#3b3c36}.foot{font-size:10px;line-height:1.6;border-top:1px solid var(--line);padding-top:18px}
+@media(prefers-reduced-motion:reduce){.shake{animation:none}}
+@media(max-width:380px){.card{padding:28px 24px}h1{font-size:27px}}
 </style>
 </head>
 <body>
 <form class="card" id="gate" autocomplete="off">
+  <svg class="gate-seal" viewBox="0 0 120 120" fill="none" stroke="currentColor" aria-hidden="true"><circle cx="60" cy="60" r="58" stroke-width=".5"/><circle cx="60" cy="60" r="50"/><circle cx="60" cy="60" r="34"/><ellipse cx="60" cy="60" rx="17" ry="34"/><path d="M26 60h68M60 10v16m0 68v16M10 60h16m68 0h16M60 28l8 24 24 8-24 8-8 24-8-24-24-8 24-8z"/></svg>
+  <div class="eyebrow">A personal observatory</div>
   <h1>The <em>Astrolabe</em></h1>
   <p class="sub">Your private working atlas. Enter your passphrase or use your access link. This browser will remember your access.</p>
   <input type="password" id="pass" placeholder="passphrase" aria-label="passphrase" autofocus>

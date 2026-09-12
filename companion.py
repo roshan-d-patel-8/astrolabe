@@ -106,7 +106,7 @@ def serve(port=8795):
             if not self.valid_host(): return self.send(403, {'error':'Invalid host'})
             route = self.path.split('?')[0]
             if route == '/api/health':
-                return self.send(200, {'service':'astrolabe','version':'4.1.0'})
+                return self.send(200, {'service':'astrolabe','version':'5.0.0'})
             if route == '/':
                 page = build.build_page(build.find_source().read_text())
                 config = '<script>window.ASTRO_CONNECTION=' + json.dumps({'token':token}) + ';</script>'
@@ -115,7 +115,7 @@ def serve(port=8795):
                 if self.headers.get('X-Astrolabe-Token') != token:
                     return self.send(403, {'error':'Session required'})
                 return self.send(200, build.vault_snapshot())
-            if route in {'/app.js','/atlas.css'}:
+            if route in {'/app.js','/atlas.css','/observatory.css'}:
                 return self.send(200, (build.HERE / route[1:]).read_text(), 'text/javascript' if route.endswith('.js') else 'text/css')
             return self.send(404, {'error':'Not found'})
         def mutate(self):

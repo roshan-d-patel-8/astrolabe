@@ -197,6 +197,10 @@ def build_page(src_html):
     snapshot = json.dumps(vault_snapshot(), ensure_ascii=False).replace("</", "<\\/")
     assert "__VAULT_SNAPSHOT__" in body, "vault snapshot marker not found"
     body = body.replace("__VAULT_SNAPSHOT__", snapshot)
+    # Reuse the user's unmodified celestial astrolabe artwork, inside encryption.
+    art_path = VAULT / 'ARCHIVES/LCARS-obsidian-celestial-relic-20260724-13.png'
+    art = 'data:image/png;base64,' + base64.b64encode(art_path.read_bytes()).decode() if art_path.is_file() else ''
+    body = '<script>window.ASTRO_ART=' + json.dumps(art) + ';</script>' + body
     body = body.replace("__BUILD_DATE__", datetime.datetime.now().astimezone().strftime("%Y-%m-%d %H:%M %Z"))
     assert "window.claude" not in body, "claude runtime reference survived the patch"
     return ('<!doctype html><html lang="en"><head><meta charset="utf-8">'

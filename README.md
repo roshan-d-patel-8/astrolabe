@@ -15,6 +15,12 @@ The unified visual-management interface for Roshan's Axis Mundi: five Focus Mund
 
 The altitude rail changes granularity without changing the underlying context. The working-atlas design uses aligned rows, direct labels, proportional count bars, restrained signal color, and detail on demand. F5 supports stage and priority filters. `/` opens global search; `1`–`5`, `[` and `]` navigate scale. Both themes support mobile layouts, reduced motion, and keyboard-operated details/search. Celestial WebGL is active only while F1 is visible.
 
+## Visual identity
+
+Version 5 uses a personal-observatory identity derived from the vault's celestial relics, wizarding library, relief atlas, carved mural, and geospatial-command references. `observatory.css` sits above the functional `atlas.css` layout: Cinzel inscriptions, Cormorant literary passages, condensed technical labels, semantic seals, brass focus plates, and jewel-toned instrument bindings. Light mode is parchment and ink; dark mode is obsidian and old gold. Existing theme preferences are honored; new sessions start dark.
+
+The original celestial astrolabe PNG is embedded once, unchanged, inside the encrypted payload and reused by F1/F2. It is not a public static asset. Font and WebGL failures leave a functional, illustrated interface; reduced motion suppresses decorative movement. Quantitative marks retain direct labels, shared scales, and true zeros. The dial reports the current focus level, not invented telemetry. The source-reference rationale and before/after screenshots remain private in the vault.
+
 ## Vault sync contract
 
 TaskNotes remains canonical. `build.py` applies the professional-task exclusions from `TaskNotes/Views/kanban-default.base`, ingests the active task files plus dashboard frontmatter, and embeds that snapshot inside the encrypted payload. The static GitHub Pages copy never pretends it can write directly to local Markdown: task and dashboard surfaces deep-link to their authoritative Obsidian notes.
@@ -56,6 +62,8 @@ Serve the repository locally after a preview build, then run `tests/smoke.py`, `
 `tests/integration.py` verifies all instrument routes, Chronos in F1/F3/F5, source isolation, project/date filters, and public write boundaries. `tests/companion.py` creates a temporary fixture vault and verifies browser create/edit, note-body preservation, backups, conflicts, and Host/Origin/token/path/value rejection.
 
 `tests/dashboard_walkthrough.py final` captures all 28 instruments at desktop and mobile widths, plus a mid-page view, into the ignored private review directory. `tests/dashboard_renderer.py` checks rendered structure, mobile readability regressions, disclosure interaction, source isolation, and page overflow. Visual scores are human judgment recorded in the private audit, not an automated design certification.
+
+`tests/identity.py` checks original artwork loading, navigation seals, focus dial and shortcuts, instrument expansion, theme persistence, 320px controls, and blocked-CDN fallback. `tests/identity_walkthrough.py final --url http://127.0.0.1:4173/.preview.html` captures all five focus levels in both themes at desktop and phone widths. These checks establish operation and layout, not a subjective 10/10 rating.
 
 Impeccable's design guidance informed v3. Its CLI engine was unavailable in this environment; no automated Impeccable certification is claimed. The design review uses its craft-floor checklist.
 

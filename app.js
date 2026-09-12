@@ -65,6 +65,55 @@
   const QUESTIONS = window.ASTRO_QUESTIONS || [];
   const icon = (paths) =>
     `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths}</svg>`;
+  // Semantic marks: the destination is an object in a memory palace, not an app tile.
+  const MARKS = {
+    compass:
+      '<circle cx="12" cy="12" r="9"/><path d="m12 3 2 7 7 2-7 2-2 7-2-7-7-2 7-2Z"/>',
+    atlas:
+      '<path d="m3 5 6-2 6 2 6-2v16l-6 2-6-2-6 2Zm6-2v16m6-14v16M4 11l3-2m9 4 4-2"/>',
+    eye: '<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/><path d="M12 1v2m0 18v2"/>',
+    lens: '<circle cx="10" cy="10" r="7"/><circle cx="10" cy="10" r="4"/><path d="m15 15 7 7M3 10h14M10 3v14"/>',
+    flame:
+      '<path d="M12 2c3 7 8 7 8 13a8 8 0 0 1-16 0c0-3 2-6 4-8-1 5 2 6 3 3 1-2 1-5 1-8Z"/><path d="M12 13c2 3 4 4 3 6a3 3 0 0 1-6-1c0-2 2-3 3-5Z"/>',
+    hearth:
+      '<path d="m2 11 10-8 10 8M5 9v12h14V9M9 21v-7h6v7"/><path d="M10 9h4"/>',
+    body: '<path d="M2 12h5l3-7 4 14 3-7h5"/><circle cx="12" cy="12" r="10"/>',
+    moon: '<path d="M18 3A10 10 0 1 0 21 17 9 9 0 0 1 18 3Z"/><path d="m9 5 1 2 2 1-2 1-1 2-1-2-2-1 2-1Z"/>',
+    book: '<path d="M12 5c-4-3-7-3-10-2v16c4-1 7 0 10 2 3-2 6-3 10-2V3c-3-1-6-1-10 2Zm0 0v16M5 7l4 1M5 11l4 1m6-4 4-1m-4 5 4-1"/>',
+    branch:
+      '<path d="M12 22V9M12 16C3 16 3 9 3 9s9-1 9 7Zm0-5C12 2 21 2 21 2s1 9-9 9Z"/>',
+    people:
+      '<circle cx="12" cy="7" r="3"/><path d="M6 22v-4a6 6 0 0 1 12 0v4M3 7a3 3 0 0 0 0 6m18-6a3 3 0 0 1 0 6M1 21v-3a4 4 0 0 1 3-4m19 7v-3a4 4 0 0 0-3-4"/>',
+    gate: '<path d="M4 22V8a8 8 0 0 1 16 0v14M8 22V8a4 4 0 0 1 8 0v14M2 22h20M8 12h8m-8 5h8M12 8v14"/>',
+    shield: '<path d="m12 2 9 4-1 10-8 6-8-6L3 6Zm0 0v20M3 9h18"/>',
+    heart:
+      '<path d="M12 21 3 12C-3 5 7-2 12 6c5-8 15-1 9 6Z"/><path d="M5 12h4l2-4 3 8 2-4h3"/>',
+    balance: '<path d="M12 2v20M5 22h14M3 7h18M6 7l-4 9h8Zm12 0-4 9h8Z"/>',
+  };
+  const glyph = (name) => icon(MARKS[name] || MARKS.compass);
+  const focusMarks = ["compass", "atlas", "eye", "lens", "flame"];
+  const domainMarks = {
+    hearth: "hearth",
+    body: "body",
+    interior: "moon",
+    muses: "book",
+    steward: "branch",
+    people: "people",
+    access: "gate",
+    quality: "shield",
+    experience: "heart",
+    financial: "balance",
+  };
+  function instrumentMark(d) {
+    const k = d.key.toLowerCase();
+    if (/heart|soul|triskelion/.test(k)) return "heart";
+    if (/chronos|orrery|star/.test(k)) return "compass";
+    if (/grove|garden|meru/.test(k)) return "branch";
+    if (/forge|dojo/.test(k)) return "flame";
+    if (/shield|banners|arch/.test(k)) return "shield";
+    if (/real|kiroshi|penelope/.test(k)) return "eye";
+    return "book";
+  }
   const storage = {
     get(key) {
       try {
@@ -120,7 +169,7 @@
     $("#altitudes").innerHTML = ALTITUDES.map(
       (a) => `
       <button class="altitude-btn ${a.n === state.altitude ? "active" : ""}" data-altitude="${a.n}" aria-label="F${a.n} ${a.name}" aria-current="${a.n === state.altitude ? "page" : "false"}">
-        <span class="code">F${a.n}</span><span class="short">${esc(a.name)}</span><small>${esc(a.short)}</small>
+        <span class="focus-mark">${glyph(focusMarks[a.n - 1])}</span><span class="code">F${a.n}</span><span class="short">${esc(a.name)}</span><small>${esc(a.short)}</small>
       </button>`,
     ).join("");
     $$(".altitude-btn").forEach((button) =>
@@ -152,9 +201,19 @@
     $("#nextAltitude").disabled = state.altitude === 5;
     $(".wing-switch").hidden = ![2, 4, 5].includes(state.altitude);
     document.body.dataset.altitude = String(state.altitude);
+    document.documentElement.style.setProperty(
+      "--focus-angle",
+      `${(state.altitude - 1) * 72}deg`,
+    );
+    if ($("#dialFocus")) $("#dialFocus").textContent = `F${state.altitude}`;
     renderRail();
     renderScope();
     renderInstruments();
+    const activePanel = $(`.panel[data-panel="${state.altitude}"]`);
+    activePanel.insertAdjacentElement(
+      state.altitude === 3 ? "beforebegin" : "afterend",
+      $("#instrumentShelf"),
+    );
     updateScrollHints();
     window.dispatchEvent(
       new CustomEvent("astrolabe-altitude", { detail: state.altitude }),
@@ -323,7 +382,7 @@
                 (task) => pillarForTask(task)?.id === p.id,
               );
               return `<button class="domain-row ${p.w}" data-pillar="${esc(p.id)}" data-wing="${p.w}">
-        <span class="domain-name"><b>${esc(p.name)}</b><small>${esc(p.realm)}</small></span>
+        <span class="domain-seal" aria-hidden="true">${glyph(domainMarks[p.id])}</span><span class="domain-name"><b>${esc(p.name)}</b><small>${esc(p.realm)}</small></span>
         <span class="domain-arrow" aria-hidden="true">${icon('<path d="M6 18 18 6M6 6h12v12"/>')}</span>
         <span class="domain-vector">${esc(p.being)}</span>
         <span class="domain-evidence"><span class="condition-dots" aria-label="${measures
@@ -338,6 +397,11 @@
             .join("")}</section>`,
       )
       .join("");
+    $("#domainMatrix").insertAdjacentHTML(
+      "beforeend",
+      `<figure class="domain-orientation"><div class="plate-label">✦ AXIS MUNDI ✦</div><h2>Two wings.<br>One life.</h2><div class="relic-window"><img class="relic-image" src="${window.ASTRO_ART || ""}" alt="Your lapis and old-gold celestial astrolabe"/><div class="relic-orbit" aria-hidden="true"></div></div><figcaption><span>THE WHOLE &amp; THE PARTICULAR</span>Choose a domain.<br>Carry it through the five planes.</figcaption><div class="orientation-counts"><span><b>${PILLARS.length}</b> domains</span><span><b>${SNAPSHOT.dashboards.length}</b> instruments</span></div><div class="orientation-actions"><button data-focus-jump="1">See the whole ↑</button><button data-focus-jump="5">Enter the work ↓</button></div></figure>`,
+    );
+    bindFocusJumps($("#domainMatrix"));
     $$("[data-pillar]").forEach((button) =>
       button.addEventListener("click", () =>
         selectPillar(button.dataset.pillar),
@@ -1097,7 +1161,7 @@
       "Plan against reality",
     ];
     $("#instrumentShelf").innerHTML =
-      `<div class="instrument-heading"><h2>${prompts[state.altitude]}</h2><span>${domain ? esc(domain.name) : state.wing === "h" ? "Hathi" : state.wing === "s" ? "Skoll" : "Whole system"} · ${records.length} instruments</span></div><div class="instrument-grid">${records.map((d) => `<button class="instrument-card" data-open-instrument="${esc(d.key)}"><span class="instrument-levels" aria-label="Available at focus levels ${d.levels.join(", ")}">${[1, 2, 3, 4, 5].map((n) => `<i class="${d.levels.includes(n) ? "mapped" : ""} ${n === state.altitude ? "current" : ""}">${n}</i>`).join("")}</span><b>${esc(d.title)}</b><span>${esc(d.purpose)}</span><small>${d.archived ? "Archived · " : ""}${d.runtimeBlocks ? "Obsidian queries + captured content" : "Captured source"} · ${esc(d.refreshed || "undated")}</small></button>`).join("")}</div>`;
+      `<div class="instrument-heading"><div><span class="plate-label">THE INSTRUMENT LIBRARY</span><h2>${prompts[state.altitude]}</h2></div><span>${domain ? esc(domain.name) : state.wing === "h" ? "Hathi" : state.wing === "s" ? "Skoll" : "Whole system"} · ${records.length} instruments</span></div><div class="instrument-grid">${records.map((d, i) => `<button class="instrument-card binding-${i % 4}" data-open-instrument="${esc(d.key)}"><span class="instrument-cover" aria-hidden="true"><span class="cover-number">${String(i + 1).padStart(2, "0")}</span>${glyph(instrumentMark(d))}<span class="cover-rule"></span></span><span class="instrument-levels" aria-label="Available at focus levels ${d.levels.join(", ")}">${[1, 2, 3, 4, 5].map((n) => `<i class="${d.levels.includes(n) ? "mapped" : ""} ${n === state.altitude ? "current" : ""}">${n}</i>`).join("")}</span><b>${esc(d.title)}</b><span>${esc(d.purpose)}</span><small>${d.archived ? "Archived · " : ""}${d.runtimeBlocks ? "Obsidian queries + captured content" : "Captured source"} · ${esc(d.refreshed || "undated")}</small></button>`).join("")}</div>`;
     bindInstruments($("#instrumentShelf"));
     $("#instrumentShelf").insertAdjacentHTML(
       "beforeend",
@@ -1215,7 +1279,7 @@
           return `<button class="project-row ${project === planProject ? "selected" : ""}" data-project="${esc(project)}"><b>${esc(project.replace(/\[\[|\]\]/g, "") || "Unassigned")} · ${members.length} active</b><span class="project-bars" aria-hidden="true">${["gate", "forge", "flow"].map((s) => `<i class="${s}" style="flex:${members.filter((t) => t.status === s).length}"></i>`).join("")}</span><span class="project-counts">${["gate", "forge", "flow"].map((s) => `<span>${stageLabel[s]} <b>${members.filter((t) => t.status === s).length}</b></span>`).join("")}</span></button>`;
         })
         .join("") +
-      '<p class="data-note">Project counts follow wing, domain, and date window; stage/priority filters apply to the board below. Canonical parentProject links only. Bars show counts, not completion percentages.</p>';
+      '<details class="planning-notes"><summary>How project counts are read</summary><p class="data-note">Project counts follow wing, domain, and date window; stage/priority filters apply to the board below. Canonical parentProject links only. Bars show counts, not completion percentages.</p></details>';
     $$("[data-project]").forEach(
       (b) =>
         (b.onclick = () => {
@@ -1380,8 +1444,33 @@
     }
   }
 
+  function bindFocusJumps(root) {
+    $$("[data-focus-jump]", root).forEach(
+      (b) => (b.onclick = () => setAltitude(Number(b.dataset.focusJump))),
+    );
+  }
+  function initIdentity() {
+    $(".brand-mark").innerHTML = glyph("compass");
+    $(".brand .kicker").textContent = "A personal observatory · Axis Mundi";
+    $(".rail-label").textContent = "FOCUS MUNDI";
+    $(".rail-label").insertAdjacentHTML(
+      "afterend",
+      '<div class="rail-dial" aria-hidden="true"><div class="dial-rings"></div><span id="dialFocus">F2</span><small>PLANE OF ATTENTION</small></div>',
+    );
+    $(".compass-figure").insertAdjacentHTML(
+      "afterbegin",
+      `<div class="polaris-relic"><img src="${window.ASTRO_ART || ""}" alt="Celestial astrolabe from your memory palace"/><span class="polaris-label">✦ POLARIS ✦</span></div>`,
+    );
+    $(".polaris-relic").appendChild($(".ambient"));
+    $(".workspace-head").insertAdjacentHTML(
+      "afterend",
+      '<div class="chapter-rule" aria-hidden="true"><span></span><i>✦</i><span></span></div>',
+    );
+    if (!window.ASTRO_ART) document.body.classList.add("no-relic-art");
+  }
   function init() {
     initIntegration();
+    initIdentity();
     $("#searchButton").insertAdjacentHTML(
       "afterbegin",
       icon('<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/>'),
@@ -1408,9 +1497,7 @@
       );
       resizeObserver.observe(list);
     });
-    const preferred =
-      storage.get("astrolabe-theme") ||
-      (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    const preferred = storage.get("astrolabe-theme") || "dark";
     applyTheme(preferred);
     $("#snapshotTime").textContent = SNAPSHOT.generatedAt
       ? new Date(SNAPSHOT.generatedAt).toLocaleString([], {
