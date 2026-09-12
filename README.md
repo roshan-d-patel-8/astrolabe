@@ -6,7 +6,7 @@ The unified visual-management interface for Roshan's Axis Mundi: five Focus Mund
 
 - **F1 Compass** — Polaris, mission, vision, and value dyads.
 - **F2 Cartography** — an interactive Hathi/Skoll domain constellation.
-- **F3 Monocle** — dashboard-instrument currency plotted by system and refresh age.
+- **F3 The Real** — dashboard-instrument currency plotted by system and refresh age.
 - **F4 Lens** — directly labeled condition small multiples for DRIVE/WATCH/LOOP measures.
 - **F5 Momentum** — TaskNotes flow, priority distribution, and the live-at-build `gate → forge → flow` board.
 

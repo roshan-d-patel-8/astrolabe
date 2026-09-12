@@ -26,7 +26,7 @@ def run():
         page.wait_for_timeout(500)
         page.screenshot(path="/tmp/astrolabe-f1.png", full_page=True)
 
-        page.get_by_role("button", name="F3 Monocle").click()
+        page.get_by_role("button", name="F3 The Real").click()
         page.locator('[data-panel="3"]').wait_for(state="visible")
         assert page.locator(".fleet-item").count() == len(snapshot["dashboards"])
         page.wait_for_timeout(500)

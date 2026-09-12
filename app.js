@@ -7,7 +7,7 @@
   const ALTITUDES = [
     { n: 1, name: "Compass", short: "Why", question: "Why?", detail: "Polaris · purpose · values" },
     { n: 2, name: "Cartography", short: "Where", question: "Where?", detail: "Ten domains · one field of view" },
-    { n: 3, name: "Monocle", short: "What", question: "What is true?", detail: "Instrument currency · system condition" },
+    { n: 3, name: "The Real", short: "What", question: "What is true?", detail: "Instrument currency · system condition" },
     { n: 4, name: "Lens", short: "Measure", question: "How are we doing?", detail: "Current · target · ownership" },
     { n: 5, name: "Momentum", short: "Now", question: "What moves now?", detail: "Gate → Forge → Flow" },
   ];
