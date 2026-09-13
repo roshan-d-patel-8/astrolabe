@@ -636,7 +636,7 @@
 
   function openDrawer(content) {
     state.selected = content;
-    $("#drawerEyebrow").textContent = content.eyebrow || "Astrolabe reading";
+    $("#drawerEyebrow").textContent = content.eyebrow || "Red5 reading";
     $("#drawerTitle").textContent = content.title || "Selection";
     $("#drawerIntro").textContent = content.intro || "";
     $("#drawerBody").innerHTML = (content.sections || [])

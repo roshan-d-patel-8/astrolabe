@@ -1,7 +1,9 @@
 ---
 tags: [ClaudeAI]
 ---
-# The Astrolabe
+# Red5
+
+Red5 is the selected public-facing name. Concept 03 uses Roshan's local TNG Title lettering as the fixed `red5.svg` wordmark, with a red 5 and theme-aware ink. The original font file is not distributed. The legacy repository/URL, canonical source filename, Keychain entry, and storage keys intentionally remain unchanged for continuity. This branding update does not redesign the restored interface.
 
 The unified visual-management interface for Roshan's Axis Mundi: five Focus Mundi altitudes, two wings, ten domains, dashboard instruments, recorded measures, and active TaskNotes work in one persistent workspace.
 

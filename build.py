@@ -74,7 +74,7 @@ window.addEventListener('astrolabe-ready', () => {
     const all = load(); const cn = document.getElementById('copyNote');
     const questions = window.ASTRO_QUESTIONS || [];
     const lines = questions.map((q, i) => { const r = all[q.id]; return (i+1) + '. ' + q.t + ': ' + (r && r.answer ? r.answer.trim() : '(blank)'); });
-    const text = 'Astrolabe interview answers · copied ' + new Date().toISOString().slice(0,10) + '\n' + lines.join('\n');
+    const text = 'Red5 interview answers · copied ' + new Date().toISOString().slice(0,10) + '\n' + lines.join('\n');
     try { await navigator.clipboard.writeText(text); cn.textContent = 'Copied ' + questions.filter(q => all[q.id] && all[q.id].answer).length + ' of ' + questions.length + ' answers.'; }
     catch (e) { window.prompt('Copy these answers:', text); }
   };
@@ -197,11 +197,12 @@ def build_page(src_html):
     snapshot = json.dumps(vault_snapshot(), ensure_ascii=False).replace("</", "<\\/")
     assert "__VAULT_SNAPSHOT__" in body, "vault snapshot marker not found"
     body = body.replace("__VAULT_SNAPSHOT__", snapshot)
+    body = body.replace("__RED5_WORDMARK__", (HERE / 'red5.svg').read_text())
     body = body.replace("__BUILD_DATE__", datetime.datetime.now().astimezone().strftime("%Y-%m-%d %H:%M %Z"))
     assert "window.claude" not in body, "claude runtime reference survived the patch"
     return ('<!doctype html><html lang="en"><head><meta charset="utf-8">'
             '<meta name="viewport" content="width=device-width,initial-scale=1">'
-            '<title>The Astrolabe</title></head><body>' + body + '</body></html>')
+            '<title>Red5</title></head><body>' + body + '</body></html>')
 
 
 def encrypt(plaintext, passphrase):
@@ -254,6 +255,7 @@ def main():
     src = find_source()
     page = build_page(src.read_text(encoding="utf-8"))
     tpl = (HERE / "template.html").read_text(encoding="utf-8")
+    tpl = tpl.replace("__RED5_WORDMARK__", (HERE / 'red5.svg').read_text())
     assert "__PAYLOAD__" in tpl
     out = tpl.replace("__PAYLOAD__", encrypt(page, p))
     (HERE / "index.html").write_text(out, encoding="utf-8")

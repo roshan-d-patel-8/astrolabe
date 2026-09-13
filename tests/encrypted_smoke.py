@@ -32,7 +32,10 @@ def run():
         assert page.locator(".altitude-btn").count() == 5
         assert page.locator(".domain-row").count() == 10
         assert page.locator(".task-card").count() == len(page.evaluate("window.ASTRO_SNAPSHOT.tasks"))
-        assert page.locator('link[href="atlas.css?v=5.0.1"]').count() == 1
+        assert page.locator('link[href="atlas.css?v=5.1.0"]').count() == 1
+        assert page.title() == 'Red5'
+        assert page.get_by_role('img', name='Red5', exact=True).count() == 1
+        assert locked.get_by_role('img', name='Red5', exact=True).count() == 1
         assert page.locator('link[href*="observatory.css"]').count() == 0
         assert page.locator('.rail-dial, .polaris-relic, .domain-orientation').count() == 0
         assert page.evaluate("window.ASTRO_SNAPSHOT.dashboards.every(d => d.preview.includes('markdown-preview-sizer'))")

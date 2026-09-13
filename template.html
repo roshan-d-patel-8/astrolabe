@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>The Astrolabe</title>
+<title>Red5</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🧭%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap">
@@ -16,6 +16,8 @@ body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:c
 .eyebrow{font-family:"IBM Plex Mono",Menlo,monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 h1{font-family:inherit;font-weight:500;font-size:32px;letter-spacing:-.035em;line-height:1.2;margin:0 0 16px}
 h1 em{font-style:normal}
+.red5-wordmark{display:block;width:220px;max-width:100%;height:auto;--red5-accent:#b93228;margin:6px 0 24px}
+@media(prefers-color-scheme:dark){.red5-wordmark{--red5-accent:#f18670}}
 .sub{color:var(--muted);margin:0 0 18px;font-size:14px}
 input{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:2px;background:var(--bg);color:var(--ink);font:inherit}
 input:focus{outline:2px solid var(--brass);outline-offset:1px;border-color:var(--brass)}
@@ -28,7 +30,7 @@ button:disabled{opacity:.6;cursor:wait}
 </head>
 <body>
 <form class="card" id="gate" autocomplete="off">
-  <h1>The <em>Astrolabe</em></h1>
+  <h1>__RED5_WORDMARK__</h1>
   <p class="sub">Your private working atlas. Enter your passphrase or use your access link. This browser will remember your access.</p>
   <input type="password" id="pass" placeholder="passphrase" aria-label="passphrase" autofocus>
   <button type="submit" id="unlock">Unlock</button>

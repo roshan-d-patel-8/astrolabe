@@ -3,6 +3,13 @@ tags: [ClaudeAI]
 ---
 # Changelog
 
+## 5.1.0 — 2026-09-12
+
+- Applied Roshan's selected Red5 concept 03: TNG Title lettering with a red 5, rendered as a fixed accessible SVG wordmark. No font software is included or requested by the site.
+- Updated the header, page title, unlock gate, accessible labels, copied-answer heading, and local startup message. Removed the now-resolved naming question.
+- Preserved the restored visual system, F1–F5, dashboard integrations, TaskNotes behavior, existing public URL, Keychain identity, and browser-storage keys.
+- Added wordmark/branding regression coverage across light/dark and desktop/phone layouts.
+
 ## 5.0.1 — 2026-09-12
 
 - Restored the v4.1 visual shell and entrance screen after Roshan rejected the decorative v5 direction. Removed its ornamental stylesheet, injected artwork, and identity-only test; the rejected implementation remains recoverable in git history.

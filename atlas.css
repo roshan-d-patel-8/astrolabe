@@ -1885,3 +1885,22 @@ textarea {
 #expandInstruments {
   margin-top: 12px;
 }
+
+/* Approved concept 03: a fixed TNG Title wordmark, not a UI font change. */
+.brand-name .red5-wordmark {
+  display: block;
+  width: 132px;
+  height: auto;
+  color: var(--ink);
+  --red5-accent: #b93228;
+  margin: 0 0 7px;
+}
+[data-theme="dark"] .brand-name .red5-wordmark {
+  --red5-accent: #f18670;
+}
+@media (max-width: 800px) {
+  .brand-name .red5-wordmark { width: 118px; margin: 0; }
+}
+@media (max-width: 520px) {
+  .brand-name .red5-wordmark { width: 110px; }
+}

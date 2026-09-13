@@ -106,7 +106,7 @@ def serve(port=8795):
             if not self.valid_host(): return self.send(403, {'error':'Invalid host'})
             route = self.path.split('?')[0]
             if route == '/api/health':
-                return self.send(200, {'service':'astrolabe','version':'5.0.1'})
+                return self.send(200, {'service':'astrolabe','version':'5.1.0'})
             if route == '/':
                 page = build.build_page(build.find_source().read_text())
                 config = '<script>window.ASTRO_CONNECTION=' + json.dumps({'token':token}) + ';</script>'
@@ -142,7 +142,7 @@ def serve(port=8795):
         do_PATCH = mutate
         do_POST = mutate
     server = ThreadingHTTPServer(('127.0.0.1',port), Handler)
-    print(f'Connected Astrolabe: {origin} (this Mac only)', flush=True)
+    print(f'Connected Red5: {origin} (this Mac only)', flush=True)
     server.serve_forever()
 
 if __name__ == '__main__':
