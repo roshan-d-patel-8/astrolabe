@@ -3,6 +3,12 @@ tags: [ClaudeAI]
 ---
 # Changelog
 
+## 5.0.1 — 2026-09-12
+
+- Restored the v4.1 visual shell and entrance screen after Roshan rejected the decorative v5 direction. Removed its ornamental stylesheet, injected artwork, and identity-only test; the rejected implementation remains recoverable in git history.
+- Preserved all 28 dashboard integrations, F1–F5, The Real, truthful visual-management scales, and canonical TaskNotes behavior. Cache-busted the restored shell and added a regression assertion against the rejected visual layer.
+- Naming remains pending Roshan's selection; no repository, URL, storage key, or vault note rename has been made.
+
 ## 5.0.0 — 2026-09-12
 
 - Replaced the generic application shell with a vault-derived personal observatory: obsidian, old gold, lapis, parchment, engraved navigation, semantic domain seals, and jewel-toned instrument bindings.
