@@ -1,0 +1,632 @@
+/* F4 only: the pinned green-phosphor measurement terminal. */
+@font-face {
+  font-family: "VT323";
+  src: url("fonts/VT323-Regular.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Share Tech Mono";
+  src: url("fonts/ShareTechMono-Regular.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+body[data-altitude="4"] {
+  --paper: #030903;
+  --surface: #071007;
+  --raised: #122912;
+  --ink: #a8e99a;
+  --muted: #8cba80;
+  --line: #41653a;
+  --accent: #9aec83;
+  --brass: #9aec83;
+  --good: #9aec83;
+  --warn: #e3c977;
+  --critical: #f5a086;
+  --none: #a0b29a;
+  --hathi: #a8e99a;
+  --skoll: #a8e99a;
+  --terminal-font: "Share Tech Mono", Menlo, monospace;
+  --terminal-display: "VT323", Menlo, monospace;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--terminal-font);
+  color-scheme: dark;
+  scrollbar-color: var(--line) var(--paper);
+}
+body[data-altitude="4"][data-lens-theme="light"] {
+  --paper: #edf5e7;
+  --surface: #f4faef;
+  --raised: #d8e9cd;
+  --ink: #173d1b;
+  --muted: #41643b;
+  --line: #7f9d75;
+  --accent: #225e25;
+  --brass: #225e25;
+  --good: #225e25;
+  --warn: #765813;
+  --critical: #963927;
+  --none: #52634a;
+  color-scheme: light;
+}
+body[data-altitude="4"]::selection,
+body[data-altitude="4"] ::selection {
+  background: var(--ink);
+  color: var(--paper);
+}
+body[data-altitude="4"] :is(button, input, select, textarea) {
+  font-family: var(--terminal-font);
+  caret-color: var(--accent);
+  border-radius: 2px;
+}
+body[data-altitude="4"] :is(h1, h2, h3, p, b, small, span, a) {
+  font-family: inherit;
+}
+body[data-altitude="4"] :focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+body[data-altitude="4"] .topbar {
+  min-height: 86px;
+  padding: 16px 32px;
+  border: 1px solid var(--line);
+}
+body[data-altitude="4"] .brand-name .red5-wordmark {
+  color: var(--ink);
+}
+body[data-altitude="4"][data-lens-theme="dark"] .brand-name .red5-wordmark {
+  --red5-accent: #f18670;
+}
+body[data-altitude="4"][data-lens-theme="light"] .brand-name .red5-wordmark {
+  --red5-accent: #b93228;
+}
+body[data-altitude="4"] :is(.kicker, .breadcrumb, .search-btn, .icon-btn) {
+  font-size: 13px;
+  letter-spacing: 0.02em;
+}
+body[data-altitude="4"] .altitude-rail {
+  position: relative;
+  top: auto;
+  bottom: auto;
+  width: 100%;
+  padding: 12px 32px;
+  border: 0;
+  border-bottom: 1px dashed var(--accent);
+  background: var(--paper);
+}
+body[data-altitude="4"] :is(.rail-label, .rail-foot) {
+  display: none;
+}
+body[data-altitude="4"] .altitudes {
+  position: static;
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}
+body[data-altitude="4"] .altitude-btn {
+  display: flex;
+  gap: 9px;
+  min-height: 44px;
+  padding: 8px 14px;
+  border-radius: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border: 1px solid transparent;
+}
+body[data-altitude="4"] .altitude-btn small {
+  display: none;
+}
+body[data-altitude="4"] .altitude-btn :is(.short, .code) {
+  font-size: 14px;
+  font-weight: 400;
+}
+body[data-altitude="4"] .altitude-btn.active {
+  border-color: var(--line);
+  background: var(--raised);
+}
+body[data-altitude="4"] .altitude-btn.active::after {
+  content: "";
+  width: 8px;
+  height: 13px;
+  background: var(--accent);
+}
+body[data-altitude="4"] .workspace {
+  margin: 0 auto;
+  max-width: 1660px;
+  padding: 32px 32px 64px;
+}
+body[data-altitude="4"] .workspace-head {
+  margin-bottom: 26px;
+  align-items: center;
+  border: 0;
+}
+body[data-altitude="4"] #altitudeName {
+  display: none;
+}
+body[data-altitude="4"] #altitudeQuestion {
+  font-family: var(--terminal-display);
+  font-size: 96px;
+  line-height: 0.88;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: var(--ink);
+  text-shadow: 0 0 16px #71dd6826;
+  margin-bottom: 16px;
+}
+body[data-altitude="4"] #altitudeQuestion::after {
+  content: "";
+  display: inline-block;
+  width: 0.44em;
+  height: 0.69em;
+  margin-left: 0.18em;
+  background: var(--accent);
+}
+body[data-altitude="4"] #altitudeDetail {
+  font-size: 19px;
+  color: var(--ink);
+  letter-spacing: 0.02em;
+}
+body[data-altitude="4"] #altitudeDetail::before {
+  content: "> ";
+  color: var(--accent);
+}
+body[data-altitude="4"] :is(.wing-btn, .zoom-btn) {
+  border-radius: 2px;
+  font-size: 13px;
+  min-height: 42px;
+}
+body[data-altitude="4"] .wing-btn.active {
+  background: var(--accent);
+  color: var(--paper);
+}
+body[data-altitude="4"] .scope-strip {
+  border: 1px dashed var(--line);
+  border-radius: 2px;
+  background: var(--surface);
+  margin-bottom: 22px;
+}
+body[data-altitude="4"] .panel {
+  animation: none;
+}
+body[data-altitude="4"] .lens-console {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 310px;
+  gap: 28px;
+  align-items: start;
+}
+body[data-altitude="4"] .lens-register {
+  min-width: 0;
+}
+body[data-altitude="4"] .terminal-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0 0 14px;
+  border-bottom: 1px dashed var(--line);
+  margin-bottom: 20px;
+}
+body[data-altitude="4"] .terminal-section-head h2 {
+  font-size: 16px;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.11em;
+  margin: 0;
+}
+body[data-altitude="4"] .terminal-section-head span {
+  font-size: 12px;
+  color: var(--muted);
+}
+body[data-altitude="4"] .metric-tallies {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  padding: 0;
+  margin-bottom: 24px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  position: relative;
+}
+body[data-altitude="4"] .lens-recording-note {
+  color: var(--muted);
+  font-size: 12px;
+  margin: -10px 0 14px;
+}
+body[data-altitude="4"] .metric-tallies::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0 3px,
+    #65bf5210 3px 4px
+  );
+}
+body[data-altitude="4"] .metric-tally {
+  padding: 16px 18px;
+  border: 0;
+  border-right: 1px solid var(--line);
+  background: var(--surface);
+}
+body[data-altitude="4"] .metric-tally:last-child {
+  border-right: 0;
+}
+body[data-altitude="4"] .metric-tally b {
+  font-family: var(--terminal-display);
+  font-size: 52px;
+  line-height: 1;
+  display: block;
+  font-weight: 400;
+}
+body[data-altitude="4"] .metric-tally span {
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+body[data-altitude="4"] :is(.metric-axis, .metric-row) {
+  grid-template-columns: minmax(0, 1.15fr) 108px minmax(0, 0.9fr) minmax(
+      0,
+      0.72fr
+    );
+  gap: 18px;
+}
+body[data-altitude="4"] .metric-axis {
+  border-bottom: 1px dashed var(--line);
+  padding: 12px 10px;
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+body[data-altitude="4"] .metric-row {
+  padding: 20px 10px;
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+}
+body[data-altitude="4"] .metric-row:hover {
+  background: var(--surface);
+}
+body[data-altitude="4"] .metric-label span {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+body[data-altitude="4"] .metric-label b {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.45;
+}
+body[data-altitude="4"] .metric-values b {
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.4;
+  font-variant-numeric: tabular-nums;
+}
+body[data-altitude="4"] :is(.metric-owner span, .metric-values span) {
+  font-size: 12px;
+  line-height: 1.5;
+}
+body[data-altitude="4"] .metric-status {
+  font-size: 12px;
+  gap: 6px;
+}
+body[data-altitude="4"] .condition-dot {
+  border-radius: 0;
+  width: 7px;
+  height: 7px;
+}
+body[data-altitude="4"] .metric-owner b {
+  font-size: 12px;
+  font-weight: 400;
+}
+body[data-altitude="4"] .lens-sidebar {
+  display: grid;
+  gap: 18px;
+}
+body[data-altitude="4"] .terminal-module {
+  padding: 19px 20px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--paper);
+}
+body[data-altitude="4"] .terminal-module h2 {
+  font-size: 15px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 400;
+  margin: 0 0 13px;
+  padding-bottom: 12px;
+  border-bottom: 1px dashed var(--line);
+}
+body[data-altitude="4"] .terminal-module p {
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 12px 0 0;
+  color: var(--muted);
+}
+body[data-altitude="4"] .terminal-module dl {
+  font-size: 13px;
+  margin: 0;
+}
+body[data-altitude="4"] .terminal-module dl div {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  margin: 8px 0;
+}
+body[data-altitude="4"] .terminal-module dt {
+  color: var(--muted);
+}
+body[data-altitude="4"] .terminal-module dd {
+  margin: 0;
+  text-align: right;
+}
+body[data-altitude="4"] .terminal-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  width: 100%;
+  background: var(--accent);
+  color: var(--paper);
+  border: 1px solid var(--accent);
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 11px 14px;
+  margin-top: 18px;
+}
+body[data-altitude="4"] .terminal-action:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+body[data-altitude="4"] .condition-distribution {
+  display: grid;
+  gap: 14px;
+  font-size: 12px;
+}
+body[data-altitude="4"] .condition-line {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr) 23px;
+  gap: 10px;
+  align-items: center;
+}
+body[data-altitude="4"] .condition-track {
+  height: 9px;
+  background: var(--raised);
+}
+body[data-altitude="4"] .condition-track i {
+  display: block;
+  width: var(--share);
+  height: 100%;
+  background: var(--ink);
+  mask: repeating-linear-gradient(90deg, #000 0 5px, transparent 5px 8px);
+}
+body[data-altitude="4"] .condition-line b {
+  text-align: right;
+  font-weight: 400;
+}
+body[data-altitude="4"] #instrumentShelf {
+  margin-top: 32px;
+  border-top: 1px dashed var(--line);
+  border-bottom: 0;
+  padding: 24px 0 0;
+}
+body[data-altitude="4"] .instrument-heading h2 {
+  font-family: var(--terminal-font);
+  font-size: 19px;
+  font-weight: 400;
+  letter-spacing: 0.03em;
+}
+body[data-altitude="4"] .instrument-heading span {
+  font-size: 12px;
+}
+body[data-altitude="4"] .instrument-card {
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 18px;
+  gap: 8px;
+  min-height: 180px;
+}
+body[data-altitude="4"] .instrument-card b {
+  font-size: 16px;
+  font-weight: 400;
+}
+body[data-altitude="4"] .instrument-card > span:not(.instrument-levels) {
+  font-size: 13px;
+  line-height: 1.5;
+}
+body[data-altitude="4"] .instrument-card small {
+  font-size: 11px;
+}
+body[data-altitude="4"] .instrument-levels i.current {
+  background: var(--accent);
+  color: var(--paper);
+}
+body[data-altitude="4"] .lens-footer {
+  padding-top: 26px;
+  color: var(--muted);
+  font-size: 13px;
+}
+body[data-altitude="4"] .lens-footer::after {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 13px;
+  background: var(--accent);
+  margin-left: 10px;
+  vertical-align: middle;
+}
+@media (max-width: 1200px) {
+  body[data-altitude="4"] .lens-console {
+    grid-template-columns: minmax(0, 1fr) 270px;
+    gap: 20px;
+  }
+  body[data-altitude="4"] .metric-row,
+  body[data-altitude="4"] .metric-axis {
+    grid-template-columns: minmax(0, 1fr) 90px minmax(0, 1fr);
+    gap: 14px;
+  }
+  body[data-altitude="4"] .metric-owner {
+    grid-column: 1/-1;
+    display: flex;
+    gap: 10px;
+  }
+  body[data-altitude="4"] .metric-axis span:last-child {
+    display: none;
+  }
+}
+@media (max-width: 1000px) {
+  body[data-altitude="4"] .lens-console {
+    grid-template-columns: 1fr;
+  }
+  body[data-altitude="4"] .lens-sidebar {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  body[data-altitude="4"] .terminal-module {
+    padding: 16px;
+  }
+  body[data-altitude="4"] .condition-line {
+    grid-template-columns: 78px minmax(0, 1fr) 18px;
+    gap: 5px;
+  }
+  body[data-altitude="4"] .altitudes {
+    gap: 4px;
+  }
+  body[data-altitude="4"] .altitude-btn {
+    padding: 8px 10px;
+    gap: 6px;
+  }
+}
+@media (max-width: 800px) {
+  body[data-altitude="4"] .topbar {
+    min-height: 76px;
+    padding: 16px 20px;
+  }
+  body[data-altitude="4"] .altitude-rail {
+    padding: 8px 14px;
+  }
+  body[data-altitude="4"] .altitudes {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 3px;
+  }
+  body[data-altitude="4"] .altitude-btn {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 8px 2px;
+  }
+  body[data-altitude="4"] .altitude-btn.active::after {
+    display: none;
+  }
+  body[data-altitude="4"] .altitude-btn .short {
+    font-size: 11px;
+    letter-spacing: 0;
+  }
+  body[data-altitude="4"] .altitude-btn .code {
+    font-size: 12px;
+  }
+  body[data-altitude="4"] .workspace {
+    padding: 26px 20px 40px;
+  }
+  body[data-altitude="4"] #altitudeQuestion {
+    font-size: 76px;
+  }
+  body[data-altitude="4"] #altitudeDetail {
+    font-size: 16px;
+  }
+  body[data-altitude="4"] .lens-sidebar {
+    grid-template-columns: 1fr 1fr;
+  }
+  body[data-altitude="4"] .terminal-module:last-child {
+    grid-column: 1/-1;
+  }
+}
+@media (max-width: 520px) {
+  body[data-altitude="4"] .topbar {
+    padding: 14px 16px;
+  }
+  body[data-altitude="4"] .workspace {
+    padding: 24px 16px 38px;
+  }
+  body[data-altitude="4"] .workspace-head {
+    gap: 16px;
+  }
+  body[data-altitude="4"] #altitudeQuestion {
+    font-size: 70px;
+  }
+  body[data-altitude="4"] #altitudeDetail {
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  body[data-altitude="4"] .metric-tallies {
+    grid-template-columns: 1fr 1fr;
+  }
+  body[data-altitude="4"] .metric-tally:nth-child(2) {
+    border-right: 0;
+  }
+  body[data-altitude="4"] .metric-tally:nth-child(-n + 2) {
+    border-bottom: 1px solid var(--line);
+  }
+  body[data-altitude="4"] .metric-tally b {
+    font-size: 42px;
+  }
+  body[data-altitude="4"] .metric-axis {
+    display: none;
+  }
+  body[data-altitude="4"] .metric-row {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 16px;
+    padding: 18px 0;
+  }
+  body[data-altitude="4"] .metric-label {
+    grid-column: 1/-1;
+  }
+  body[data-altitude="4"] .metric-status {
+    grid-column: 1;
+    grid-row: auto;
+  }
+  body[data-altitude="4"] .metric-values {
+    grid-column: 2;
+    grid-row: 2/4;
+  }
+  body[data-altitude="4"] .metric-owner {
+    grid-column: 1;
+    display: block;
+  }
+  body[data-altitude="4"] .lens-sidebar {
+    grid-template-columns: 1fr;
+  }
+  body[data-altitude="4"] .terminal-section-head {
+    align-items: start;
+  }
+  body[data-altitude="4"] .terminal-section-head span {
+    max-width: 100px;
+    text-align: right;
+  }
+  body[data-altitude="4"] .instrument-heading {
+    align-items: start;
+  }
+  body[data-altitude="4"] .instrument-heading h2 {
+    font-size: 17px;
+  }
+  body[data-altitude="4"] .lens-footer {
+    font-size: 11px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  body[data-altitude="4"] *,
+  body[data-altitude="4"] *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  body[data-altitude="4"] .metric-tallies::after {
+    display: none;
+  }
+}

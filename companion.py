@@ -93,7 +93,7 @@ def serve(port=8795):
     class Handler(BaseHTTPRequestHandler):
         def log_message(self, *args): pass  # Never log private titles or tokens.
         def send(self, status, payload, kind='application/json'):
-            blob = payload.encode() if isinstance(payload, str) else json.dumps(payload).encode()
+            blob = payload if isinstance(payload, bytes) else payload.encode() if isinstance(payload, str) else json.dumps(payload).encode()
             self.send_response(status)
             self.send_header('Content-Type', kind + '; charset=utf-8')
             self.send_header('Cache-Control', 'no-store')
@@ -106,7 +106,7 @@ def serve(port=8795):
             if not self.valid_host(): return self.send(403, {'error':'Invalid host'})
             route = self.path.split('?')[0]
             if route == '/api/health':
-                return self.send(200, {'service':'astrolabe','version':'5.1.0'})
+                return self.send(200, {'service':'astrolabe','version':'5.2.0'})
             if route == '/':
                 page = build.build_page(build.find_source().read_text())
                 config = '<script>window.ASTRO_CONNECTION=' + json.dumps({'token':token}) + ';</script>'
@@ -115,8 +115,10 @@ def serve(port=8795):
                 if self.headers.get('X-Astrolabe-Token') != token:
                     return self.send(403, {'error':'Session required'})
                 return self.send(200, build.vault_snapshot())
-            if route in {'/app.js','/atlas.css'}:
+            if route in {'/app.js','/atlas.css','/f4-terminal.css'}:
                 return self.send(200, (build.HERE / route[1:]).read_text(), 'text/javascript' if route.endswith('.js') else 'text/css')
+            if route in {'/fonts/VT323-Regular.ttf','/fonts/ShareTechMono-Regular.ttf'}:
+                return self.send(200, (build.HERE / route[1:]).read_bytes(), 'font/ttf')
             return self.send(404, {'error':'Not found'})
         def mutate(self):
             if not self.valid_host() or self.headers.get('Origin') != origin or self.headers.get('X-Astrolabe-Token') != token:

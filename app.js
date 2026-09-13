@@ -152,9 +152,16 @@
     $("#nextAltitude").disabled = state.altitude === 5;
     $(".wing-switch").hidden = ![2, 4, 5].includes(state.altitude);
     document.body.dataset.altitude = String(state.altitude);
+    document.body.dataset.lensTheme = storage.get("red5-lens-theme") || "dark";
+    renderThemeControl(viewTheme());
     renderRail();
     renderScope();
     renderInstruments();
+    const shelf = $("#instrumentShelf");
+    if (shelf) {
+      if (state.altitude === 4) $('[data-panel="4"]').after(shelf);
+      else $(".panel").before(shelf);
+    }
     updateScrollHints();
     window.dispatchEvent(
       new CustomEvent("astrolabe-altitude", { detail: state.altitude }),
@@ -488,6 +495,33 @@
       </div>`,
       )
       .join("");
+    renderLensReadout();
+  }
+
+  function renderLensReadout() {
+    const rows = METRICS.filter(
+      (r) =>
+        (state.wing === "both" || r.w === state.wing) &&
+        (!state.domain ||
+          r.pillar === PILLARS.find((p) => p.id === state.domain)?.name),
+    );
+    const scope = state.domain
+      ? PILLARS.find((p) => p.id === state.domain)?.name
+      : state.wing === "both"
+        ? "Hathi + Skoll"
+        : state.wing === "h"
+          ? "Hathi"
+          : "Skoll";
+    $("#lensScope").textContent = scope;
+    $("#lensRowCount").textContent = `${rows.length} recorded measures`;
+    $("#lensSourceCount").textContent = String(rows.length);
+    $("#lensDistribution").innerHTML = ["good", "warn", "critical", "none"]
+      .map((status) => {
+        const count = rows.filter((r) => r.status === status).length;
+        const share = rows.length ? (count / rows.length) * 100 : 0;
+        return `<div class="condition-line"><span>${esc(statusLabel[status])}</span><span class="condition-track" aria-hidden="true"><i style="--share:${share}%"></i></span><b>${count}</b></div>`;
+      })
+      .join("");
   }
 
   function taskMatches(task) {
@@ -765,11 +799,24 @@
   function applyTheme(theme) {
     document.documentElement.dataset.theme = theme;
     storage.set("astrolabe-theme", theme);
+    renderThemeControl(viewTheme());
+  }
+
+  function viewTheme() {
+    return state.altitude === 4
+      ? document.body.dataset.lensTheme ||
+          storage.get("red5-lens-theme") ||
+          "dark"
+      : document.documentElement.dataset.theme;
+  }
+
+  function renderThemeControl(theme) {
     $("#themeToggle").innerHTML =
       `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">${theme === "dark" ? '<circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/>' : '<circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/>'}</svg>`;
     $("#themeToggle").setAttribute(
       "aria-label",
-      theme === "dark" ? "Use light mode" : "Use dark mode",
+      (state.altitude === 4 ? "F4: " : "") +
+        (theme === "dark" ? "Use light mode" : "Use dark mode"),
     );
     window.dispatchEvent(new Event("astrolabe-theme"));
   }
@@ -975,11 +1022,21 @@
     $$(".wing-btn").forEach((button) =>
       button.addEventListener("click", () => setWing(button.dataset.wing)),
     );
-    $("#themeToggle").addEventListener("click", () =>
-      applyTheme(
-        document.documentElement.dataset.theme === "dark" ? "light" : "dark",
-      ),
-    );
+    $("#themeToggle").addEventListener("click", () => {
+      const next = viewTheme() === "dark" ? "light" : "dark";
+      if (state.altitude === 4) {
+        document.body.dataset.lensTheme = next;
+        storage.set("red5-lens-theme", next);
+        renderThemeControl(next);
+      } else applyTheme(next);
+    });
+    $("#lensInstruments").onclick = () => {
+      $("#instrumentShelf").scrollIntoView({
+        block: "start",
+        behavior: "auto",
+      });
+      $("#instrumentShelf .instrument-card")?.focus({ preventScroll: true });
+    };
     $("#searchButton").addEventListener("click", openPalette);
     $("#palette").addEventListener("click", (event) => {
       if (event.target === $("#palette")) closePalette();

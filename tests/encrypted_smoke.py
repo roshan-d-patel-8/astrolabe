@@ -32,7 +32,8 @@ def run():
         assert page.locator(".altitude-btn").count() == 5
         assert page.locator(".domain-row").count() == 10
         assert page.locator(".task-card").count() == len(page.evaluate("window.ASTRO_SNAPSHOT.tasks"))
-        assert page.locator('link[href="atlas.css?v=5.1.0"]').count() == 1
+        assert page.locator('link[href="atlas.css?v=5.2.0"]').count() == 1
+        assert page.locator('link[href="f4-terminal.css?v=5.2.0"]').count() == 1
         assert page.title() == 'Red5'
         assert page.get_by_role('img', name='Red5', exact=True).count() == 1
         assert locked.get_by_role('img', name='Red5', exact=True).count() == 1
@@ -42,6 +43,11 @@ def run():
         assert page.locator('#instrumentShelf .instrument-card').count() > 0
         assert page.evaluate('typeof window.ASTRO_CONNECTION') == 'undefined'
         assert page.evaluate("getComputedStyle(document.documentElement).getPropertyValue('--rail').trim()") in {"216px", "174px", "0px"}
+        page.locator('.altitude-btn[data-altitude="4"]').click()
+        page.evaluate('document.fonts.ready')
+        assert page.locator('.lens-recording-note').is_visible()
+        assert page.evaluate('document.fonts.check(\'16px "Share Tech Mono"\') && document.fonts.check(\'76px "VT323"\')')
+        page.locator('.altitude-btn[data-altitude="2"]').click()
         if os.environ.get("ASTROLABE_TEST_URL"):
             page.set_viewport_size({"width": 1440, "height": 1100})
             if page.locator("html").get_attribute("data-theme") != "dark":

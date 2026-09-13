@@ -53,6 +53,14 @@ Domain task counts are keyword-based suggestions. Unmatched tasks remain availab
 
 ## Verification
 
+### F4 measurement terminal
+
+`f4-terminal.css` scopes the green-phosphor terminal to F4 Lens, including its horizontal focus navigation. Local OFL-licensed VT323 and Share Tech Mono fonts provide the heading and data typography; the existing Red5 SVG wordmark remains intact. F4 defaults to dark green and stores its independent pale-green preference in `red5-lens-theme`; other focus levels retain `astrolabe-theme`.
+
+Tallies and distribution bars count the currently scoped recorded measures. Source status, targets, ownership, and the observation-date warning remain visible; these readings are not live telemetry. The source sidebar links into the existing instrument shelf. Texture is stationary and removed with reduced motion.
+
+`tests/f4_terminal.py` checks F4 styling isolation, exact condition proportions, wing scope, instrument navigation, independent theme persistence, local fonts, text contrast, and overflow at 2048, 1440, 390, and 320 pixels in both modes. Private captures and the scoped design draft live in the ignored `.impeccable/review/` directory. Impeccable guidance and manual review inform this work; its engine is unavailable, so no automated Impeccable certification is claimed.
+
 Serve the repository locally after a preview build, then run `tests/smoke.py`, `tests/makeover.py`, and `tests/encrypted_smoke.py`. The makeover suite checks all five altitudes across four widths and both themes, domain/wing filtering, count proportions including zero, modal focus, search, and blocked browser storage. The encrypted test uses the existing Keychain entry without logging its value.
 
 `tests/integration.py` verifies all instrument routes, Chronos in F1/F3/F5, source isolation, project/date filters, and public write boundaries. `tests/companion.py` creates a temporary fixture vault and verifies browser create/edit, note-body preservation, backups, conflicts, and Host/Origin/token/path/value rejection.

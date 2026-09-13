@@ -3,6 +3,12 @@ tags: [ClaudeAI]
 ---
 # Changelog
 
+## 5.2.0 — 2026-09-13
+
+- Added the user-selected green-phosphor terminal theme exclusively to F4 Lens: pixel display typography, monospaced registers, horizontal navigation, outlined source panels, and proportionate recorded-condition bars.
+- Preserved the Red5 wordmark, other four focus views, original measurements, and TaskNotes behavior. Explicit recording-date warnings prevent the terminal styling from implying live telemetry.
+- Added an independent F4 light/dark preference, responsive layouts, reduced-motion treatment, locally served OFL fonts and licenses, and F4 isolation/data/interaction regression coverage.
+
 ## 5.1.0 — 2026-09-12
 
 - Applied Roshan's selected Red5 concept 03: TNG Title lettering with a red 5, rendered as a fixed accessible SVG wordmark. No font software is included or requested by the site.
